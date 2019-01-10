@@ -14,16 +14,15 @@ class SearchDefenderState: public State {
 
 public:
 
-    SearchDefenderState() = default;
-    virtual ~SearchDefenderState() = default;
+    SearchDefenderState();
 
     virtual void go_next(Controller& controller) override;
 
-    virtual std::string& get_state_name() override { return _state_name; }
+    const std::string& get_state_name() override { return _state_name; }
 
 private:
 
-    static const std::string _state_name = "Search Defender State";
+    const std::string _state_name = "Search Defender State";
 
 };
 #endif //BALLING_NAO_SEARCH_POTENTIAL_DEFENDER_H

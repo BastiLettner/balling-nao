@@ -14,16 +14,15 @@ class RequestTaskState: public State {
 
 public:
 
-    RequestTaskState() = default;
-    virtual ~RequestTaskState() = default;
+    RequestTaskState();
 
-    virtual void go_next(Controller& controller) override;
+    void go_next(Controller& controller) override;
 
-    virtual std::string& get_state_name() override { return _state_name; }
+    const std::string& get_state_name() override { return _state_name; }
 
 private:
 
-    static const std::string _state_name = "Request Ball State";
+    const std::string _state_name = "Request Ball State";
 
 };
 

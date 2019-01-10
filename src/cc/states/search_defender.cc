@@ -3,3 +3,17 @@
 //
 
 #include "search_defender.h"
+#include "../modules/controller.h"
+
+
+SearchDefenderState::SearchDefenderState():
+    State()
+{
+
+}
+
+
+void SearchDefenderState::go_next(Controller &controller) {
+
+
+}
