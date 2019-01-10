@@ -3,7 +3,7 @@
 
 int main(int argc, char** argv) {
 
-    ros::init(argc, argv, "balling-nao");
+    ros::init(argc, argv, "balling_nao");
 
     ros::spinOnce();
 
