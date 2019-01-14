@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(balling-nao)
+project(balling_nao)
 
 
 find_package(catkin REQUIRED cmake_modules COMPONENTS
@@ -45,13 +45,17 @@ add_library(CONTROLLER
         src/cc/states/move_into_throw_dist.cc
         src/cc/states/execute_dunk_motion.cc
         src/cc/states/execute_throw_motion.cc
-        src/cc/states/done.h
+        src/cc/states/done.cc
         src/cc/states/detect_hoop.cc
-        src/cc/states/avoid_defener_routine.cc)
+        src/cc/states/avoid_defener_routine.cc
+        src/cc/errors/balling_nao_error.cc
+        src/cc/errors/not_implemented_error.cc
+        src/cc/modules/tactile.cc
+        )
 link_libraries(CONTROLLER ${catkin_LIBRARIES} ${MOTION} ${VISION} ${SPEECH})
 
 
-add_executable(BALLER src/main.cc)
+add_executable(BALLER src/main.cc src/cc/errors/balling_nao_error.h src/cc/errors/balling_nao_error.cc src/cc/errors/not_implemented_error.h src/cc/errors/not_implemented_error.cc)
 include_directories(${Boost_INCLUDE_DIRS})
 target_link_libraries(BALLER ${catkin_LIBRARIES} ${Boost_LIBRARIES} ${CONTROLLER})
 

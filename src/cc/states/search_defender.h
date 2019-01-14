@@ -16,9 +16,9 @@ public:
 
     SearchDefenderState();
 
-    virtual void go_next(Controller& controller) override;
+    void go_next(Controller& controller) override;
 
-    const std::string& get_state_name() override { return _state_name; }
+    const std::string get_state_name() override { return _state_name; }
 
 private:
 

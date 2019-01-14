@@ -13,10 +13,14 @@ class Controller;
 
 class State {
 
+    // Base Class for States
+
 public:
 
     // Default Constructs Object
     State() = default;
+
+    // Default destruction
     virtual ~State() = default;
 
     // Interface for state transition function.
@@ -26,12 +30,18 @@ public:
     //
     virtual void go_next(Controller& controller) = 0;
 
-    virtual const std::string& get_state_name() = 0;
+    // Return the name of the state
+    virtual const std::string get_state_name() = 0;
 
+    // Returns the available commands
     std::vector<std::string>& get_available_cmds() { return _available_cmds; }
 
+    // Check if the command is valid by searching for it in the available command
+    // Return true if it is valid else false
+    bool cmd_valid(std::string& cmd);
 
-private:
+
+protected:
 
     std::vector<std::string> _available_cmds;
 
