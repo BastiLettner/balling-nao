@@ -34,8 +34,20 @@ add_library(SPEECH src/cc/modules/speech.cc)
 link_libraries(SPEECH ${catkin_LIBRARIES})
 
 
-file(GLOB STATE_FILES "*.cc")
-add_library(CONTROLLER ${STATE_FILES} src/cc/modules/controller.cc)
+add_library(CONTROLLER
+        src/cc/modules/controller.cc
+        src/cc/states/search_defender.cc
+        src/cc/states/take_ball.cc
+        src/cc/states/state.cc
+        src/cc/states/request_task.cc
+        src/cc/states/request_ball.cc
+        src/cc/states/move_into_dunk_pos.cc
+        src/cc/states/move_into_throw_dist.cc
+        src/cc/states/execute_dunk_motion.cc
+        src/cc/states/execute_throw_motion.cc
+        src/cc/states/done.h
+        src/cc/states/detect_hoop.cc
+        src/cc/states/avoid_defener_routine.cc)
 link_libraries(CONTROLLER ${catkin_LIBRARIES} ${MOTION} ${VISION} ${SPEECH})
 
 
