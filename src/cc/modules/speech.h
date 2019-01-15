@@ -12,7 +12,6 @@
 class Speech {
 
 public:
-
     // Constructs object.
     // - advertises "/speech_action/goal"
     // - advertises "/speech_vocabulary_action/goal"
