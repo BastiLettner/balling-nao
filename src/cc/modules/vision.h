@@ -5,12 +5,15 @@
 #ifndef BALLING_NAO_VISION_H
 #define BALLING_NAO_VISION_H
 
+#include <ros/node_handle.h>
+
 
 class Vision {
 
 public:
 
-    Vision() = default;
+    explicit Vision(ros::NodeHandle& node_handle);
+
     ~Vision() = default;
 
     Vision(Vision&& vision) = delete;

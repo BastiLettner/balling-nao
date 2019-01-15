@@ -7,6 +7,9 @@
 
 #include <ros/node_handle.h>
 #include <naoqi_bridge_msgs/WordRecognized.h>
+#include <actionlib_msgs/GoalStatusArray.h>
+
+class State;
 
 
 class Speech {
@@ -25,6 +28,7 @@ public:
     Speech(Speech&& speech) = delete;
 
     // Make NAO say a sentence.
+    // Call blocks until Nao finished speaking
     //
     // Args:
     //     sentence: The sentence Nao should say
@@ -33,10 +37,12 @@ public:
     //     true: The call was successful
     //     false: The call was not successful and NAO did not say the sentence.
     //
-    bool talk(std::string sentence);
+    void talk(std::string sentence);
 
     // Make a recording.
     // If there was no match this function throws a CmdNotUnderstoodError containing useful information
+    // If Nao is currently speaking this function waits until hes done.
+    //
     // Args:
     //     available_sentences: The available sentences for this call. Will be split by space into words.
     //     results: Will be filled with the results. Won't be empty if there is no exception.
@@ -45,27 +51,47 @@ public:
     void listen(std::vector<std::string>& available_sentences, std::string& results, uint32_t record_duration);
 
     // Callback for speech recognition
-    // If the results have the reqired confidence this function puts them into the matches.
+    // If the results have the required confidence this function puts them into the _matches vector.
     void speech_recognition_callback(const naoqi_bridge_msgs::WordRecognized::ConstPtr& msg);
 
     // Prints a log message
     void LOG(std::string msg);
 
-    // Takes a list of sentences and extracts the contained workds from them.
+    // Takes a list of sentences and extracts the contained words from them (delimiter = 'space').
     // The words won't necessarily be unique.
     //
     // Args:
     //     sentences: List of sentences
-    //     result: The result will be stored in this vector. Is emtpy at call.
+    //     result: The result will be stored in this vector. Is emtpy in the beginning
     //
     void get_words_from_sentences(std::vector<std::string> &sentences, std::vector<std::string>& result);
 
     // Publishes the vocab
     //
     // Args:
-    //     vocab: List of available words
+    //     vocab: List of available words. Words can be contained twice
     //
     void publish_vocab(std::vector<std::string>& vocab);
+
+    // Call for checking if Nao is currently speaking
+    // Stores value in the _currently_speaking variable.
+    void speech_status(const actionlib_msgs::GoalStatusArray::ConstPtr& msg);
+
+    // Implements a request response block for a dialog with nao
+    // Nao states a request and the user answer.
+    // Nao will speak out the request. After speaking he starts listening to the user.
+    // Then he compares what he recorded to the expected answers from the user
+    // Those are dependent on the state.
+    // If the answer Nao recorded does not match any of the expected answer nao will speak out what he recorded
+    // and then ask again. This goes on until nao recorded a expected answer and this will be written into the
+    // response
+    //
+    // Args:
+    //     state: The state from where the function is called
+    //     request: The request nao will make
+    //     response: Will contain the response afterwards
+    //
+    void request_response_block(State* state, std::string& request, std::string& response);
 
 private:
 
@@ -79,9 +105,13 @@ private:
 
     ros::Subscriber _speech_recog_sub;
 
+    ros::Subscriber _speech_status;
+
     uint32_t _vocab_id = 0;
 
     std::vector<std::string> _matches;
+
+    bool _currently_speaking = false;
 
 };
 #endif //BALLING_NAO_SPEECH_H

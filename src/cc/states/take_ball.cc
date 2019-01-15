@@ -19,8 +19,7 @@ void TakeBallState::go_next(Controller &controller) {
     controller.motion_module().request_ball_position();
 
     // Notify the user that the robot is ready to grasp the ball
-    // TODO: Make call
-    // controller.speech_module().talk("You can hand me the ball now")
+    controller.speech_module().talk("You can hand me the ball now");
 
     // 2. Use Tactile Module to detect tactile button press
     // Blocks until the button is pressed
@@ -35,6 +34,7 @@ void TakeBallState::go_next(Controller &controller) {
     }
 
     else {
+        //TODO: ungrasp
         controller.set_state(new TakeBallState());
     }
 

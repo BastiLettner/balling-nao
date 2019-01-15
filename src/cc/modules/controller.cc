@@ -7,10 +7,14 @@
 #include <iostream>
 
 
-Controller::Controller():
-    _current_state(new RequestBallState())
+Controller::Controller(ros::NodeHandle& node_handle):
+    _current_state(new RequestBallState()),
+    _motion(node_handle),
+    _vision(node_handle),
+    _tactile(node_handle),
+    _speech(node_handle)
 {
-    go_next();
+    // Nothing to do here
 }
 
 
@@ -22,8 +26,8 @@ void Controller::go_next() {
     // Create a message for the speech module to speak out the new states name
     std::string msg("Nao entered ");
     msg += _current_state->get_state_name();
-    // TODO: Make call
-    // _speech.talk(msg);
+
+    _speech.talk(msg);
 
     _current_state->go_next(*this);
 
@@ -42,8 +46,12 @@ void Controller::run() {
     LOG("Starting Run Function");
 
     // As long as we don't enter the 'Done' state we move on.
+    ros::Rate loop_rate(10);
+
     while(_current_state->get_state_name() != "Done") {
         go_next();
+        ros::spinOnce();
+        loop_rate.sleep();
     }
 
     LOG("Reached Done State");

@@ -8,6 +8,9 @@
 #include <vector>
 #include "balling_nao_error.h"
 
+class Speech;
+class State;
+
 
 class CmdNotUnderstoodError: public BallingNaoError {
 
@@ -23,6 +26,8 @@ public:
     std::string recorded;
 
     const char* what() const noexcept override;
+
+    void handle(Speech& speech, State* state);
 
 };
 

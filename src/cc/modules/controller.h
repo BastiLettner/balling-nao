@@ -20,7 +20,7 @@ public:
     // Initializes the controller.
     // Sets the current state to the RequestBallState
     // and calls its go_next function.
-    Controller();
+    explicit Controller(ros::NodeHandle& node_handle);
 
     // Default Destruction
     ~Controller() = default;

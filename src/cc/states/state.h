@@ -8,6 +8,7 @@
 #include <vector>
 #include <string>
 
+
 class Controller;
 
 
@@ -35,11 +36,6 @@ public:
 
     // Returns the available commands
     std::vector<std::string>& get_available_cmds() { return _available_cmds; }
-
-    // Check if the command is valid by searching for it in the available command
-    // Return true if it is valid else false
-    bool cmd_valid(std::string& cmd);
-
 
 protected:
 

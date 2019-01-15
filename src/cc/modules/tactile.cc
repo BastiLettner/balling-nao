@@ -28,8 +28,10 @@ void Tactile::update_button_tracker(const naoqi_bridge_msgs::HeadTouch::ConstPtr
 void Tactile::detect_button_pressed(std::string button_name) {
 
     _button_tracker.buttons[button_name] = ButtonStates::RELEASED;
+    ros::Rate loop_rate(10);
     while(_button_tracker.buttons[button_name] != ButtonStates::WAS_PRESSED) {
-        // Wait for the button to be pressed
+        ros::spin();
+        loop_rate.sleep();
     }
     _button_tracker.buttons[button_name] = ButtonStates::RELEASED;
 }

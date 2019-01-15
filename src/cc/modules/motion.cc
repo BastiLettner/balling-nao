@@ -3,10 +3,11 @@
 //
 
 #include "motion.h"
+#include "sensor_msgs/JointState.h"
 #include "../errors/not_implemented_error.h"
 
 
-Motion::Motion(ros::NodeHandle &node_handel)
+Motion::Motion(ros::NodeHandle &node_handle)
 {
 
 }

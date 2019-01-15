@@ -1,0 +1,10 @@
+string name
+float32[] coordinates 
+float32 speed
+float32 time
+int32 type
+int32 use_both_arms
+---
+float32[6] coordinates
+
+

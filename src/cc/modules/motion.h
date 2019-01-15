@@ -7,11 +7,12 @@
 
 #include <ros/node_handle.h>
 
+
 class Motion {
 
 public:
 
-    explicit Motion(ros::NodeHandle& node_handel);
+    explicit Motion(ros::NodeHandle& node_handle);
     ~Motion() = default;
 
     Motion(Motion&& motion) = delete;

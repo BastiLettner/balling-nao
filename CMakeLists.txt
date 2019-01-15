@@ -9,6 +9,14 @@ find_package(catkin REQUIRED cmake_modules COMPONENTS
 
 find_package(Boost REQUIRED COMPONENTS system thread)
 
+#add_service_files(
+#  DIRECTORY srv
+#  FILES
+#  GetPosition.srv
+#  GetTransform.srv
+#  Movement.srv
+#)
+
 set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
 
 include_directories(
@@ -54,9 +62,15 @@ add_library(CONTROLLER
         )
 link_libraries(CONTROLLER ${catkin_LIBRARIES} ${MOTION} ${VISION} ${SPEECH})
 
+catkin_install_python(PROGRAMS ./src/python/move_service.py
+  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
 
 add_executable(BALLER src/main.cc)
 include_directories(${Boost_INCLUDE_DIRS})
 target_link_libraries(BALLER ${catkin_LIBRARIES} ${Boost_LIBRARIES} ${CONTROLLER})
 
 
+# Tests
+add_executable(TEST_SPEECH test/test_speech_integration.cc)
+add_executable(TEST_REQUEST_BALL test/test_state_request_ball.cc)
