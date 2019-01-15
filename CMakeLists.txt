@@ -33,7 +33,6 @@ link_libraries(VISTION ${catkin_LIBRARIES})
 add_library(SPEECH src/cc/modules/speech.cc)
 link_libraries(SPEECH ${catkin_LIBRARIES})
 
-
 add_library(CONTROLLER
         src/cc/modules/controller.cc
         src/cc/states/search_defender.cc
@@ -55,7 +54,7 @@ add_library(CONTROLLER
 link_libraries(CONTROLLER ${catkin_LIBRARIES} ${MOTION} ${VISION} ${SPEECH})
 
 
-add_executable(BALLER src/main.cc src/cc/errors/balling_nao_error.h src/cc/errors/balling_nao_error.cc src/cc/errors/not_implemented_error.h src/cc/errors/not_implemented_error.cc)
+add_executable(BALLER src/main.cc src/cc/errors/balling_nao_error.h src/cc/errors/balling_nao_error.cc src/cc/errors/not_implemented_error.h src/cc/errors/not_implemented_error.cc src/cc/errors/cmd_not_understood_error.h src/cc/errors/cmd_not_understood_error.cc src/cc/util/string_split.h src/cc/util/string_split.cc)
 include_directories(${Boost_INCLUDE_DIRS})
 target_link_libraries(BALLER ${catkin_LIBRARIES} ${Boost_LIBRARIES} ${CONTROLLER})
 
