@@ -5,17 +5,27 @@ project(balling_nao)
 find_package(catkin REQUIRED cmake_modules COMPONENTS
   roscpp
   std_msgs
+  rospy
+  message_generation
+  sensor_msgs
+  cv_bridge
+  image_transport
 )
 
 find_package(Boost REQUIRED COMPONENTS system thread)
 
-#add_service_files(
-#  DIRECTORY srv
-#  FILES
-#  GetPosition.srv
-#  GetTransform.srv
-#  Movement.srv
-#)
+add_service_files(
+  DIRECTORY srv
+  FILES
+  GetPosition.srv
+  GetTransform.srv
+  Movement.srv
+  MoveJoints.srv
+  HandControl.srv
+)
+
+generate_messages(DEPENDENCIES std_msgs)
+catkin_package(CATKIN_DEPENDS message_runtime)
 
 set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
 
@@ -62,7 +72,10 @@ add_library(CONTROLLER
         )
 link_libraries(CONTROLLER ${catkin_LIBRARIES} ${MOTION} ${VISION} ${SPEECH})
 
-catkin_install_python(PROGRAMS ./src/python/move_service.py
+catkin_install_python(PROGRAMS
+        ./scripts/joint_service.py
+        ./scripts/position_service.py
+        ./scripts/hand_service.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 

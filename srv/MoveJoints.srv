@@ -1,0 +1,9 @@
+float32[] angles
+float32[] fractionMaxSpeeds
+float32[] times
+bool[] isAbsolutes
+#int32 movement_type
+string[] names
+float32 sleep_time
+---
+bool success
