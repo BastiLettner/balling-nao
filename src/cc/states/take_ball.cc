@@ -13,6 +13,7 @@ TakeBallState::TakeBallState():
     // No available commands in this State
 }
 
+
 void TakeBallState::go_next(Controller &controller) {
 
     // 1. Use Motion Module to move arm into <take-ball> position
@@ -37,6 +38,5 @@ void TakeBallState::go_next(Controller &controller) {
         //TODO: ungrasp
         controller.set_state(new TakeBallState());
     }
-
 
 }

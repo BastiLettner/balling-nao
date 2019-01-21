@@ -14,6 +14,9 @@ class State;
 
 class Speech {
 
+    // Speech module serves as an API to let NAO talk and listen to commands.
+    // The main functions are listen() and talk().
+
 public:
     // Constructs object.
     // - advertises "/speech_action/goal"
@@ -34,17 +37,15 @@ public:
     //     sentence: The sentence Nao should say
     //
     // Returns:
-    //     true: The call was successful
-    //     false: The call was not successful and NAO did not say the sentence.
     //
     void talk(std::string sentence);
 
     // Make a recording.
+    // If Nao is currently speaking this function waits until he is done.
     // If there was no match this function throws a CmdNotUnderstoodError containing useful information
-    // If Nao is currently speaking this function waits until hes done.
     //
     // Args:
-    //     available_sentences: The available sentences for this call. Will be split by space into words.
+    //     available_sentences: The available sentences for this call.
     //     results: Will be filled with the results. Won't be empty if there is no exception.
     //     record_duration: The duration of the recording in seconds
     //
@@ -56,15 +57,6 @@ public:
 
     // Prints a log message
     void LOG(std::string msg);
-
-    // Takes a list of sentences and extracts the contained words from them (delimiter = 'space').
-    // The words won't necessarily be unique.
-    //
-    // Args:
-    //     sentences: List of sentences
-    //     result: The result will be stored in this vector. Is emtpy in the beginning
-    //
-    void get_words_from_sentences(std::vector<std::string> &sentences, std::vector<std::string>& result);
 
     // Publishes the vocab
     //
@@ -78,18 +70,17 @@ public:
     void speech_status(const actionlib_msgs::GoalStatusArray::ConstPtr& msg);
 
     // Implements a request response block for a dialog with nao
-    // Nao states a request and the user answer.
+    // Nao states a request and expects the user to answer.
     // Nao will speak out the request. After speaking he starts listening to the user.
-    // Then he compares what he recorded to the expected answers from the user
-    // Those are dependent on the state.
-    // If the answer Nao recorded does not match any of the expected answer nao will speak out what he recorded
-    // and then ask again. This goes on until nao recorded a expected answer and this will be written into the
-    // response
+    // Then he compares what he recorded to the expected answers.
+    // If the answer Nao recorded does not match any of the expected answers (with more than 40% confidence)
+    // Nao will say that he did not understand and then ask again.
+    // This goes on until Nao recorded an expected answer which will then be written in the response parameter
     //
     // Args:
     //     state: The state from where the function is called
-    //     request: The request nao will make
-    //     response: Will contain the response afterwards
+    //     request: The request nao will make (question asked)
+    //     response: Will contain the command of the user
     //
     void request_response_block(State* state, std::string& request, std::string& response);
 

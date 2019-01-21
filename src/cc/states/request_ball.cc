@@ -28,14 +28,13 @@ void RequestBallState::go_next(Controller &controller) {
     // This function only return when a valid command was recorded.
     controller.speech_module().request_response_block(this, request, answer);
 
-
-    if( answer == "yes" ) {
+    if( answer == "yes " ) {
         // Move to the TakeBallState
         controller.set_state(new TakeBallState());
     }
     else {
         // Assert that the answer is no
-        assert(answer == "no");
+        assert(answer == "no ");
         // Move to the done state
         controller.set_state(new DoneState());
     }

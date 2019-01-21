@@ -15,6 +15,7 @@
 
 
 Speech::Speech(ros::NodeHandle& node_handle) {
+    // Create all nodes.
     _speech_pub = node_handle.advertise<naoqi_bridge_msgs::SpeechWithFeedbackActionGoal>("/speech_action/goal", 1);
     _vocab_pub = node_handle.advertise<naoqi_bridge_msgs::SetSpeechVocabularyActionGoal>(
             "/speech_vocabulary_action/goal", 1);
@@ -30,24 +31,27 @@ void Speech::talk(std::string sentence) {
     LOG("Talking: " + sentence);
     std_srvs::Empty empty;  // Create Empty msg for stop record service
 
-    // Make sure NAO is not currently listening
     naoqi_bridge_msgs::SpeechWithFeedbackActionGoal msg_goal;
     msg_goal.goal_id.id = std::to_string(_vocab_id);
     msg_goal.goal.say = sentence;
     _vocab_id ++; // Increase id counter to guarantee uniqueness
     _speech_pub.publish(msg_goal);
 
-    // Wait 100 milli seconds to make sure the action status publishing
+    // Wait 500 milli seconds to make sure the action status publishing
     // is received and we can check the speech status
-    ros::Duration(0, 500).sleep();
-    ros::spinOnce();
     ros::Rate loop_rate(10);
-    loop_rate.sleep();
-    ros::spinOnce();
+    int i = 0;
+    while(i < 5) {
+        ros::spinOnce();
+        loop_rate.sleep();
+        i++;
+    }
+    // Wait until speaking is done
     while(_currently_speaking) {
         // Wait
         ros::spinOnce();
         loop_rate.sleep();
+        LOG(std::to_string(_currently_speaking));
 
     }
 
@@ -66,24 +70,24 @@ void Speech::listen(
 
     ros::Rate loop_rate(10);
     LOG(std::to_string(_currently_speaking));
+    // Check if Nao is currently speaking
     while(_currently_speaking) {
         // Wait
         ros::spinOnce();
         loop_rate.sleep();
     }
 
-    std::vector<std::string> vocab;  // Create the vocab
-    get_words_from_sentences(available_sentences, vocab);  // Extract the words from the sentences
+    publish_vocab(available_sentences);  // Publish the current vocab
 
-    publish_vocab(vocab);  // Publish the current vocab
-
-    _matches.clear();  // Clear the vector so that the callback can fill it.
+    _matches.clear();  // Clear the vector so that the speech recognition callback can fill it.
 
     std_srvs::Empty empty;
     if(_recog_start_srv.call(empty)) {
 
         LOG("Started Recording");
         int wait_iters = 0;
+        // Wait the specified duration
+        // In the mean time the callback should have filled out the _matches
         while(wait_iters < recording_duration * 10) {
             // Wait
             ros::spinOnce();
@@ -91,41 +95,33 @@ void Speech::listen(
             wait_iters ++;
             LOG("RECORDING");
         }
-        // Collect the results. In the mean time the callback should have filled out the _matches
 
         // TODO: Catch else
+        // Stop recording
         if( _recog_stop_srv.call(empty)) {
             LOG("Stopped Recording");
         }
 
+        // Check results
         if(_matches.empty()) {
-            throw CmdNotUnderstoodError("No word recognized. Maybe the recording duration was too short.", vocab, "");
+            throw CmdNotUnderstoodError("No word recognized. Maybe the recording duration was too short.", available_sentences, "");
         }
 
         else {
-
+            // Constructs sentence
             for (const auto &match : _matches) {
                 result.append(match);
                 result.append(" ");
             }
-            // Look if the sentence matches one of the available sentences
-            for(const auto &sent: available_sentences) {
-                if(result == sent) {
-                    return;
-                }
-            }
-            // If no match was found: exception
             LOG(result);
-            throw CmdNotUnderstoodError(
-                    "Nao recorded some words but there was no match to the requested sentences",
-                    available_sentences,
-                    result
-                    );
+            // Confirm understood command.
+            talk("i understood " + result);
+            return;
         }
     }
 
     else {
-        throw CmdNotUnderstoodError("Could not start Recording", vocab, "");
+        throw CmdNotUnderstoodError("Could not start Recording", available_sentences, "");
     }
 
 }
@@ -141,6 +137,8 @@ void Speech::speech_recognition_callback(const naoqi_bridge_msgs::WordRecognized
     LOG("Speech recognition Callback");
 
     for (int i = 0; i < msg->words.size(); i++) {
+
+        // Check confidence values
         if (msg->confidence_values[i] > 0.4f) {
             std::string log_msg = "MATCHED INPUT TO WORD " +
                     msg->words[i] + " WITH " + std::to_string(int(100*msg->confidence_values[i])) + "% CONFIDENCE";
@@ -157,41 +155,27 @@ void Speech::speech_recognition_callback(const naoqi_bridge_msgs::WordRecognized
 }
 
 
-void Speech::get_words_from_sentences(std::vector<std::string> &sentences, std::vector<std::string> &result) {
-
-    assert(result.empty());
-
-    std::vector<std::string> tmp_result;
-
-    for(const std::string& sentence: sentences) {
-        boost::split(tmp_result, sentence, boost::is_any_of(" "));
-        for(const std::string& word: tmp_result) {
-
-            result.push_back(word);  // Copied into the results
-        }
-        tmp_result.clear();
-    }
-}
-
-
 void Speech::publish_vocab(std::vector<std::string> &vocab) {
 
-    // Create the
+    // Create emtpy message
     std_srvs::Empty empty;
     naoqi_bridge_msgs::SetSpeechVocabularyActionGoal msg_goal;
     msg_goal.goal_id.id = std::to_string(_vocab_id);
     msg_goal.goal.words = vocab;
 
-    _vocab_pub.publish(msg_goal);  // Publish the currently available command
+    _vocab_pub.publish(msg_goal);  // Publish the currently available command(s)
 
 }
 
 
 void Speech::speech_status(const actionlib_msgs::GoalStatusArray::ConstPtr& msg) {
 
+    // Check if there is a entry in the status list which contains a status value of on
+    // indicating that Nao is currently busy speaking
     _currently_speaking = false;
+
     for(const auto& status: msg->status_list) {
-        if(status.status == 1) {
+        if(status.status == 1/* or status.status == 3*/) {
             _currently_speaking = true;
         }
     }
@@ -202,11 +186,10 @@ void Speech::request_response_block(State *state, std::string &request, std::str
 
     while(true) {
         try {
-            // First Nao says what he wants
-            // The call blocks until he is finished
+            // First Nao make the request
+            // The call blocks until he is finished talking
             talk(request);
-            LOG("FINISHED TALKING");
-            // Wait for answer. Create empty msg to fill.
+            // Wait for the answer. Fills the response parameter is the command was understood
             // Now we listen
             listen(state->get_available_cmds(), response, 3);
         }

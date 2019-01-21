@@ -30,6 +30,7 @@ void Controller::go_next() {
     _speech.talk(msg);
 
     _current_state->go_next(*this);
+    std::cout << "Left go next" << std::endl;
 
 }
 
@@ -45,11 +46,19 @@ void Controller::run() {
 
     LOG("Starting Run Function");
 
-    // As long as we don't enter the 'Done' state we move on.
+    // Increases stability
     ros::Rate loop_rate(10);
+    int warmup = 10;
+    while (warmup > 0) {
+        ros::spinOnce();
+        loop_rate.sleep();
+        warmup--;
+    }
 
+    // As long as we don't enter the 'Done' state we move on
     while(_current_state->get_state_name() != "Done") {
         go_next();
+        std::cout << _current_state->get_state_name() << std::endl;
         ros::spinOnce();
         loop_rate.sleep();
     }
@@ -63,8 +72,5 @@ void Controller::set_state(State* state) {
 
     // Set to the new state will be copied.
     _current_state.reset(state);
-
-    // Delete the state.
-    delete state;
 
 }

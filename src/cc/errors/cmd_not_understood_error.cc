@@ -34,24 +34,6 @@ const char* CmdNotUnderstoodError::what() const noexcept {
 
 void CmdNotUnderstoodError::handle(Speech& speech, State* state) {
 
-    if(recorded.empty()) {
-        speech.talk("i didn't hear anything");
-    }
-    else {
-        std::string nao_notify_user;
-        nao_notify_user += "i heard " + recorded;
-        nao_notify_user += "i am in state " + state->get_state_name() + " now";
-        nao_notify_user += "in this state i understand ";
-        if(state->get_available_cmds().empty()) {
-            nao_notify_user += "no command";
-        }
-        else {
-            for(const std::string& cmd: state->get_available_cmds()) {
-                nao_notify_user.append(cmd);
-                nao_notify_user.append(" or ");
-            }
-        }
-        speech.talk(nao_notify_user);
-    }
+    speech.talk("i did not hear a valid command");
 
 }

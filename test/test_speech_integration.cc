@@ -3,6 +3,7 @@
 //
 
 #include "../src/cc/modules/speech.h"
+#include "../src/cc/errors/cmd_not_understood_error.h"
 
 int main(int argc, char* argv[]) {
 
@@ -11,28 +12,29 @@ int main(int argc, char* argv[]) {
     Speech speech(nh);
 
     std::string answer;
-    std::vector<std::string> vocab = {"no thanks", "yes please "};
+    std::vector<std::string> vocab = {"no", "yes"};
 
     ros::Rate loop_rate(10);
 
-
-    while(ros::ok()) {
-
+    int warmup = 10;
+    while (warmup > 0) {
         ros::spinOnce();
-        speech.talk("Hello I am Nao");
         loop_rate.sleep();
-
+        warmup--;
     }
 
-//    while(ros::ok()) {
-//
-//        ros::spinOnce();
-//        speech.listen(vocab, answer, 4);
-//        std::cout << "Answer " << answer << std::endl;
-//        loop_rate.sleep();
-//        answer = "";
-//
-//    }
+
+    ros::spinOnce();
+    speech.talk("can i have the ball");
+    try {
+        speech.listen(vocab, answer, 3);
+    }
+    catch (CmdNotUnderstoodError& e) {
+        std::cout << e.what() << std::endl;
+        std::cout << "Failed" << std::endl;
+    }
+    loop_rate.sleep();
+    std::cout << answer << std::endl;
 
 
 }
