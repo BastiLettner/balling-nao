@@ -7,13 +7,7 @@
 
 #include <ros/node_handle.h>
 #include <ros/ros.h>
-#include <cv.h>
-#include <highgui.h>
-#include <opencv2/imgproc/imgproc.hpp>
-#include <opencv2/highgui/highgui.hpp>
 #include <image_transport/image_transport.h>
-#include <aruco/aruco.h>
-#include <tf/transform_broadcaster.h>
 
 
 class Vision {
@@ -32,13 +26,13 @@ public:
     //     true: Ball is visible
     //     false: Ball is not visible
     bool ball_visible() { return _ball_visible; }
+    void imageCb(const sensor_msgs::ImageConstPtr& msg);
 
 private:
 
     bool _ball_visible = false;
 
-    //aruco::CameraParameters _cam_params;
-    //image_transport::Subscriber _image_sub;
+
 
 
 };

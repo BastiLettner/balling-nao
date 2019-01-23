@@ -35,17 +35,8 @@ class NaoController(object):
 
         req.angles = list(req.angles)
 
-        if(req.movement_type == 0):
-            self.check_limits(req)
-            self.normal_movement(req)
-
-        elif(req.movement_type == 1):
-
-            self.check_limits(req)
-            self.interpolated_movement(req)
-
-        else:
-            raise InvalidArgumentError("Received invalid argument for req.movement_type: {}".format(req.movement_type))
+        #self.check_limits(req)
+        self.normal_movement(req)
 
         time.sleep(req.sleep_time)
         for name, angle in zip(req.names, req.angles):

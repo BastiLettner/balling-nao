@@ -5,6 +5,10 @@
 #include "motion.h"
 
 #include "sensor_msgs/JointState.h"
+#include <std_srvs/Empty.h>
+#include <std_msgs/Bool.h>
+#include <geometry_msgs/PoseStamped.h>
+#include <geometry_msgs/Pose2D.h>
 #include "../errors/not_implemented_error.h"
 #include "balling_nao/GetPosition.h"
 #include "balling_nao/Movement.h"
@@ -13,6 +17,7 @@
 #include "balling_nao/HandControl.h"
 
 float DT = 0.2;
+float PI_180 = 3.141592/180;
 
 Motion::Motion(ros::NodeHandle &node_handle)
 {
@@ -21,16 +26,27 @@ Motion::Motion(ros::NodeHandle &node_handle)
     _client_get_transform = node_handle.serviceClient<balling_nao::GetTransform>("get_transformation");
     _client_set_joints = node_handle.serviceClient<balling_nao::MoveJoints>("set_joints_server");
     _client_set_hands = node_handle.serviceClient<balling_nao::HandControl>("set_hands_server");
+    _body_stiffness_enable = node_handle.serviceClient<std_srvs::Empty>("/body_stiffness/enable");
+    _body_stiffness_disable = node_handle.serviceClient<std_srvs::Empty>("/body_stiffness/disable");
+    _walk_pub=node_handle.advertise<geometry_msgs::Pose2D>("/cmd_pose", 1);
+    _footContact_sub = node_handle.subscribe<std_msgs::Bool>("/foot_contact", 1, &Motion::footContactCallback, this);
 }
 
 
 void Motion::request_ball_position() {
+    ROS_INFO("REQUESTING BALL");
     //http://doc.aldebaran.com/1-14/family/robots/joints_robot.html#robot-joints-v4-right-arm-joints
     std::vector<std::string> names = {"RShoulderRoll", "RShoulderPitch", "RElbowYaw", "RWristYaw", "RElbowRoll"};
-    std::vector<float> angles{-5.0, 0.0, 110.0, 100.0, 85.0};
+    float RShoulderRoll = -5.0 * PI_180;
+    float RShoulderPitch = 0.0 * PI_180;
+    float RElbowYaw = 110.0 * PI_180;
+    float RWristYaw = 100.0 * PI_180;
+    float RElbowRoll = 85.0 * PI_180;
+    std::vector<float> angles{RShoulderRoll, RShoulderPitch, RElbowYaw, RWristYaw, RElbowRoll};
+
     std::vector<float> times(5, DT);
 
-    request_joint_movement(names, angles, times, 0.2);
+    request_joint_movement(names, angles, times, 0.5);
 
     request_hand_action("RHand", 0);
 }
@@ -68,10 +84,15 @@ bool Motion::request_joint_movement(std::vector<std::string>& names, std::vector
     srv.request.fractionMaxSpeeds = fractionMaxSpeeds;
     //srv.request.movement_type = NORMAL;
     srv.request.sleep_time = sleep_time;
-    if (_client_set_joints.call(srv)) {
-        bool success = srv.response.success;
-        return success;
+    bool success = false;
+    //execute the order a few times to make sure the limb is inthe correct position
+    for (int i = 0; i<5; i++) {
+        if (_client_set_joints.call(srv)) {
+            sleep(1);
+            success = srv.response.success;
+        }
     }
+    return success;
 }
 
 bool Motion::request_hand_action(std::string handName, int state){ //state = 0 to open the hand, 1 to close
@@ -83,3 +104,36 @@ bool Motion::request_hand_action(std::string handName, int state){ //state = 0 t
         return success;
     }
 }
+
+void Motion::footContactCallback(const std_msgs::BoolConstPtr& contact)
+{
+    bool has_contact = contact->data;
+    std::cout << "Has contact: " << has_contact << std::endl;
+    if (1 != has_contact) {
+        stop_walking();
+    }
+}
+
+void Motion::walk_to_position(double x, double y, double theta)
+{
+    std_srvs::Empty empty;
+    _body_stiffness_enable.call(empty);
+    ROS_INFO("Requesting to walk");
+    geometry_msgs::Pose2D msg;
+    msg.x = x;
+    msg.y = y;
+    msg.theta = theta;
+    _walk_pub.publish(msg);
+}
+
+
+void Motion::stop_walking()
+{
+    std_srvs::Empty msg;
+    if (_stop_walk_srv.call(msg)) {
+        ROS_INFO("Requesting to StopWalk");
+        _body_stiffness_disable.call(msg);
+    }
+
+}
+

@@ -12,18 +12,14 @@ class NaoController(object):
 
         self.nao_proxy = ALProxy("ALMotion", ip, port)
         rospy.init_node('move_joints_server')
-        rospy.Service("set_joints_server", MoveJoints, self.process_request)
+        rospy.Service("set_hands_server", HandControl, self.process_request)
 
     def process_request(self, req):
-
-        self.set_stiffness(req, 1.0)
 
         # kill task call
         task_list = self.nao_proxy.getTaskList()
         for task in task_list:
             self.nao_proxy.killTask(task[1])
-
-        req.angles = list(req.angles)
 
         if(req.action_type == 0):
 	    self.nao_proxy.openHand(req.hand_name)
@@ -34,14 +30,7 @@ class NaoController(object):
         else:
             raise InvalidArgumentError("Received invalid argument for req.action_type: {}".format(req.action_type))
 
-        self.set_stiffness(req, 0.0)
         return True
-
-    def set_stiffness(self, req, val):
-        for name in req.names:
-            for i in xrange(20):
-                self.nao_proxy.setStiffnesses(name, val)
-
 
 if __name__ == '__main__':
 

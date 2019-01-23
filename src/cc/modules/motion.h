@@ -7,6 +7,7 @@
 
 #include <ros/node_handle.h>
 #include "tactile.h"
+#include <std_msgs/Bool.h>
 
 
 class Motion {
@@ -32,6 +33,12 @@ public:
 
     bool request_hand_action(std::string handName, int state);
 
+    void footContactCallback(const std_msgs::BoolConstPtr& contact);
+
+    void walk_to_position(double x, double y, double theta);
+
+    void stop_walking();
+
 private:
 
     ros::ServiceClient _client_get_position;
@@ -39,6 +46,15 @@ private:
     ros::ServiceClient _client_get_transform;
     ros::ServiceClient _client_set_joints;
     ros::ServiceClient _client_set_hands;
+
+    // Publisher to nao walking
+    ros::Publisher _walk_pub;
+    ros::ServiceClient _stop_walk_srv;
+    // Subscriber for foot contact
+    ros::Subscriber _footContact_sub;
+    ros::ServiceClient _body_stiffness_enable;
+    ros::ServiceClient _body_stiffness_disable;
+
 
 };
 
