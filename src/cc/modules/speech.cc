@@ -68,7 +68,6 @@ void Speech::listen(
     assert(result.empty());  // Make sure the result is empty now.
 
     ros::Rate loop_rate(10);
-    LOG(std::to_string(_currently_speaking));
     // Check if Nao is currently speaking
     while(_currently_speaking) {
         // Wait

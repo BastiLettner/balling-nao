@@ -13,10 +13,6 @@ Tactile::Tactile(ros::NodeHandle &node_handle)
 
 void Tactile::update_button_tracker(const naoqi_bridge_msgs::HeadTouch::ConstPtr& tactile_state) {
 
-    LOG("Button Callback");
-    LOG(std::to_string((int)tactile_state->button));
-    LOG(std::to_string((int)tactile_state->statePressed));
-
     if (tactile_state->button == tactile_state->buttonFront && tactile_state->statePressed) {
         _button_tracker.buttons["front"] = ButtonStates::WAS_PRESSED;
     }

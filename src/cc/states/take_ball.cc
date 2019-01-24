@@ -18,11 +18,10 @@ void TakeBallState::go_next(Controller &controller) {
 
     // 1. Use Motion Module to move arm into <take-ball> position
     controller.motion_module().request_ball_position();
+    controller.motion_module().finger_movement(0);  // Open the hand
 
     // Notify the user that the robot is ready to finger_movement the ball
     controller.speech_module().talk("You can hand me the ball now");
-
-    controller.motion_module().finger_movement(0);  // Open the hand
 
     // 2. Use Tactile Module to detect tactile button press
     // Blocks until the button is pressed
@@ -37,6 +36,8 @@ void TakeBallState::go_next(Controller &controller) {
     }
 
     else {
+        controller.speech_module().talk("i can not see the ball");
+        controller.speech_module().talk("we will have to try again");
         controller.set_state(new TakeBallState());
     }
 

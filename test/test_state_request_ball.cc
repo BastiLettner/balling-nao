@@ -12,13 +12,6 @@ int main(int argc, char* argv[]) {
 
     Controller c(nh);
 
-    int warmup = 10;
-    while (warmup > 0) {
-        ros::spinOnce();
-        loop_rate.sleep();
-        warmup--;
-    }
-
     c.run();
 
 }

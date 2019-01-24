@@ -4,6 +4,5 @@ float32[] times
 bool[] isAbsolutes
 #int32 movement_type
 string[] names
-float32 sleep_time
 ---
 float32[] new_angles

@@ -8,7 +8,7 @@
 #include "../states/take_ball.h"
 
 Controller::Controller(ros::NodeHandle& node_handle):
-    _current_state(new TakeBallState()),
+    _current_state(new RequestBallState()),
     _motion(node_handle),
     _vision(node_handle),
     _tactile(node_handle),
@@ -30,7 +30,6 @@ void Controller::go_next() {
     _speech.talk(msg);
 
     _current_state->go_next(*this);
-    std::cout << "Left go next" << std::endl;
 
 }
 

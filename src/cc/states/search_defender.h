@@ -13,12 +13,25 @@ class Controller;
 class SearchDefenderState: public State {
 
 public:
+    // Constructs object
+    //
+    // Args:
+    //     task: The task (dunk or throw) from the RequestTaskState.
+    explicit SearchDefenderState(std::string& task);
 
-    SearchDefenderState();
-
+    // Implements logic of Search Defender State
+    // The main steps are:
+    //     1. if defender visible: move to AvoidDefenderState
+    //        if defender not visible: move to DetectHoopState
+    //
+    // Args:
+    //     controller: The controller instance
+    //
     void go_next(Controller& controller) override;
 
     const std::string get_state_name() override { return _state_name; }
+
+    const std::string task;  // The task (dunk or throw) from the RequestTaskState. Need to be carried by this state.
 
 private:
 

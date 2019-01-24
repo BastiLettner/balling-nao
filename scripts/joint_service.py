@@ -39,9 +39,6 @@ class NaoController(object):
         self.normal_movement(req)
         #self.interpolated_movement(req);
 
-        time.sleep(req.sleep_time)
-        # self.set_stiffness(req, 0.0)
-
         useSensors  = True
         sensorAngles = self.nao_proxy.getAngles(req.names, useSensors)
         response = MoveJointsResponse()
