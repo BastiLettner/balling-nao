@@ -4,7 +4,7 @@ import time
 import almath
 import sys
 from naoqi import ALProxy
-from balling_nao.srv import MoveJoints
+from balling_nao.srv import MoveJoints, MoveJointsResponse
 
 
 NAO_LIMITS = {
@@ -37,13 +37,21 @@ class NaoController(object):
 
         #self.check_limits(req)
         self.normal_movement(req)
+        #self.interpolated_movement(req);
 
         time.sleep(req.sleep_time)
-        for name, angle in zip(req.names, req.angles):
-            print "Performed angle change of {} to {}".format(name, angle)
-        self.set_stiffness(req, 0.0)
+        # self.set_stiffness(req, 0.0)
 
-        return True
+        useSensors  = True
+        sensorAngles = self.nao_proxy.getAngles(req.names, useSensors)
+        response = MoveJointsResponse()
+        response.new_angles = sensorAngles
+
+        for name, angle, new_angle in zip(req.names, req.angles, response.new_angles):
+            print "Performed angle change of {} to {}".format(name, angle)
+            print "New angles {}: {}".format(name, new_angle)
+
+        return response
 
     def set_stiffness(self, req, val):
         for name in req.names:
@@ -52,11 +60,11 @@ class NaoController(object):
 
     def normal_movement(self, req):
 
-        self.nao_proxy.setAngles(req.names, req.angles, 0.05)
+        self.nao_proxy.setAngles(req.names, req.angles, req.fractionMaxSpeed)
 
-    def interpolated_movement(self, req):
+    #def interpolated_movement(self, req):
 
-        self.nao_proxy.post.angleInterpolation(req.names, req.angles, req.times, True)
+        #self.nao_proxy.post.angleInterpolation(req.names, req.angles, req.times, True)
 
     def check_limits(self, req):
 

@@ -8,6 +8,7 @@
 #include <ros/node_handle.h>
 #include "tactile.h"
 #include <std_msgs/Bool.h>
+#include <balling_nao/MoveJointsResponse.h>
 
 
 class Motion {
@@ -25,11 +26,13 @@ public:
 
     // Grasp to hold the ball
     // Blocks until motion is done
-    void grasp();
+    void finger_movement(int type);
 
     std::vector<float> request_cartesian_movement(std::string& name, std::vector<float> &position, float time);
 
-    bool request_joint_movement(std::vector<std::string>& names, std::vector<float> &angles, std::vector<float> &fractionMaxSpeeds, float sleep_time);
+    void request_joint_movement(std::vector<std::string>& names, std::vector<float> &angles, float fractionMaxSpeed, float sleep_time, balling_nao::MoveJointsResponse& response);
+
+    bool check_movement_success(std::vector<float>& angles_request, std::vector<float>& angle_response);
 
     bool request_hand_action(std::string handName, int state);
 

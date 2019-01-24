@@ -19,15 +19,17 @@ void TakeBallState::go_next(Controller &controller) {
     // 1. Use Motion Module to move arm into <take-ball> position
     controller.motion_module().request_ball_position();
 
-    // Notify the user that the robot is ready to grasp the ball
+    // Notify the user that the robot is ready to finger_movement the ball
     controller.speech_module().talk("You can hand me the ball now");
+
+    controller.motion_module().finger_movement(0);  // Open the hand
 
     // 2. Use Tactile Module to detect tactile button press
     // Blocks until the button is pressed
     controller.tactile_module().detect_button_pressed("front");
 
-    // 3. Use Motion Module to grasp
-    controller.motion_module().grasp();
+    // 3. Use Motion Module to finger_movement
+    controller.motion_module().finger_movement(1);  // Close hand
 
     // 4. Use vision module to detect if ball is visible
     if (controller.vision_module().ball_visible()) {
@@ -35,7 +37,6 @@ void TakeBallState::go_next(Controller &controller) {
     }
 
     else {
-        //TODO: ungrasp
         controller.set_state(new TakeBallState());
     }
 

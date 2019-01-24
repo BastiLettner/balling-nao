@@ -5,10 +5,10 @@
 #include "controller.h"
 #include "../states/request_ball.h"
 #include <iostream>
-
+#include "../states/take_ball.h"
 
 Controller::Controller(ros::NodeHandle& node_handle):
-    _current_state(new RequestBallState()),
+    _current_state(new TakeBallState()),
     _motion(node_handle),
     _vision(node_handle),
     _tactile(node_handle),

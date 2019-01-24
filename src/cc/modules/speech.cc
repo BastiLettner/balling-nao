@@ -51,7 +51,6 @@ void Speech::talk(std::string sentence) {
         // Wait
         ros::spinOnce();
         loop_rate.sleep();
-        LOG(std::to_string(_currently_speaking));
 
     }
 
@@ -93,7 +92,6 @@ void Speech::listen(
             ros::spinOnce();
             loop_rate.sleep();
             wait_iters ++;
-            LOG("RECORDING");
         }
 
         // TODO: Catch else

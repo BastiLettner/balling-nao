@@ -42,11 +42,14 @@ public:
     // Prohibit copying of Tactile.
     Tactile(Tactile&& tactile) = delete;
 
+    // Function prints log messages
+    void LOG(std::string message) { std::cout << "[TACTILE]: " << message << std::endl; }
+
     // Callback for keeping track of the button states
     // The button states are collected in the ButtonTracker structure
     // and updated by this function.
     // When a button is pressed the function simply sets its state to WAS_PRESSED.
-    // The usefull logic is implemented in the detect_button_pressed function.
+    // The useful logic is implemented in the detect_button_pressed function.
     // The topic publishes only when a button is pressed.
     void update_button_tracker(const naoqi_bridge_msgs::HeadTouch::ConstPtr& tactile_state);
 

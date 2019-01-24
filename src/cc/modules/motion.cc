@@ -36,26 +36,40 @@ Motion::Motion(ros::NodeHandle &node_handle)
 void Motion::request_ball_position() {
     ROS_INFO("REQUESTING BALL");
     //http://doc.aldebaran.com/1-14/family/robots/joints_robot.html#robot-joints-v4-right-arm-joints
-    std::vector<std::string> names = {"RShoulderRoll", "RShoulderPitch", "RElbowYaw", "RWristYaw", "RElbowRoll"};
+    std::vector<std::string> names = {"RShoulderPitch", "RShoulderRoll", "RElbowYaw", "RWristYaw", "RElbowRoll"};
     float RShoulderRoll = -5.0 * PI_180;
-    float RShoulderPitch = 0.0 * PI_180;
+    float RShoulderPitch = 60.0 * PI_180;
     float RElbowYaw = 110.0 * PI_180;
     float RWristYaw = 100.0 * PI_180;
     float RElbowRoll = 85.0 * PI_180;
-    std::vector<float> angles{RShoulderRoll, RShoulderPitch, RElbowYaw, RWristYaw, RElbowRoll};
+    std::vector<float> angles{RShoulderPitch, RShoulderRoll, RElbowYaw, RWristYaw, RElbowRoll};
 
-    std::vector<float> times(5, DT);
+    //std::vector<float> times(5, DT);
+    float fractionMaxSpeed = 0.2;
 
-    request_joint_movement(names, angles, times, 0.5);
+    std_srvs::Empty empty;
+    //_body_stiffness_enable.call(empty);
+    balling_nao::MoveJointsResponse response;
 
-    request_hand_action("RHand", 0);
+
+
+    request_joint_movement(names, angles, fractionMaxSpeed, 0.5, response);
+
+    finger_movement(0);
+
+    while(!check_movement_success(angles, response.new_angles)) {
+        ROS_INFO_STREAM("RETRY MOVEMENT");
+        request_joint_movement(names, angles, fractionMaxSpeed, 0.5, response);
+    }
+
 }
 
 
-void Motion::grasp() {
-    if (true){ //tactile press
-        request_hand_action("RHand", 1);
-    }
+
+
+
+void Motion::finger_movement(int type) { //0 to open, 1 to close
+    request_hand_action("RHand", type);
 }
 
 std::vector<float> Motion::request_cartesian_movement(std::string &name, std::vector<float> &position, float time) {
@@ -75,24 +89,22 @@ std::vector<float> Motion::request_cartesian_movement(std::string &name, std::ve
     }
 }
 
-bool Motion::request_joint_movement(std::vector<std::string>& names, std::vector<float> &angles,
-        std::vector<float> &fractionMaxSpeeds, float sleep_time) {
+void Motion::request_joint_movement(std::vector<std::string>& names, std::vector<float> &angles,
+        float fractionMaxSpeed, float sleep_time, balling_nao::MoveJointsResponse
+        & response) {
 
     balling_nao::MoveJoints srv;
     srv.request.names = names;
     srv.request.angles = angles;
-    srv.request.fractionMaxSpeeds = fractionMaxSpeeds;
+    srv.request.fractionMaxSpeed = fractionMaxSpeed;
     //srv.request.movement_type = NORMAL;
     srv.request.sleep_time = sleep_time;
-    bool success = false;
     //execute the order a few times to make sure the limb is inthe correct position
-    for (int i = 0; i<5; i++) {
-        if (_client_set_joints.call(srv)) {
-            sleep(1);
-            success = srv.response.success;
-        }
+
+    if (_client_set_joints.call(srv)) {
+        response = srv.response;
     }
-    return success;
+
 }
 
 bool Motion::request_hand_action(std::string handName, int state){ //state = 0 to open the hand, 1 to close
@@ -135,5 +147,17 @@ void Motion::stop_walking()
         _body_stiffness_disable.call(msg);
     }
 
+}
+
+bool Motion::check_movement_success(std::vector<float> &angles_request, std::vector<float> &angle_response) {
+
+
+
+    for(size_t i = 0; i < angles_request.size(); i++) {
+        float dif = (angles_request[i] - angle_response[i]) / PI_180;
+        ROS_INFO_STREAM(dif);
+        if(dif > 15.0 or dif < -15.0) return false;
+    }
+    return true;
 }
 
