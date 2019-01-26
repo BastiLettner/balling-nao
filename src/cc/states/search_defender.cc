@@ -21,7 +21,7 @@ void SearchDefenderState::go_next(Controller &controller) {
     // 1. if defender visible: move to AvoidDefenderState
     //    if defender not visible: move to DetectHoopState
     if (controller.vision_module().defender_visible()) {
-        controller.set_state(new )
+        //controller.set_state(new )
     }
 
 }

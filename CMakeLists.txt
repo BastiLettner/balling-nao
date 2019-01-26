@@ -10,6 +10,7 @@ find_package(catkin REQUIRED cmake_modules COMPONENTS
   sensor_msgs
   cv_bridge
   image_transport
+  tf
 )
 
 find_package(Boost REQUIRED COMPONENTS system thread)
@@ -45,7 +46,7 @@ link_libraries(MOTION ${catkin_LIBRARIES})
 
 
 add_library(VISTION src/cc/modules/vision.cc)
-link_libraries(VISTION ${catkin_LIBRARIES})
+link_libraries(VISTION ${catkin_LIBRARIES} ${aruco_LIBS})
 
 
 add_library(SPEECH src/cc/modules/speech.cc)
@@ -64,7 +65,7 @@ add_library(CONTROLLER
         src/cc/states/execute_throw_motion.cc
         src/cc/states/done.cc
         src/cc/states/detect_hoop.cc
-        src/cc/states/avoid_defener_routine.cc
+        src/cc/states/avoid_defender.cc
         src/cc/errors/balling_nao_error.cc
         src/cc/errors/not_implemented_error.cc
         src/cc/errors/cmd_not_understood_error.cc

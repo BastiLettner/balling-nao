@@ -25,13 +25,24 @@ void TakeBallState::go_next(Controller &controller) {
 
     // 2. Use Tactile Module to detect tactile button press
     // Blocks until the button is pressed
-    controller.tactile_module().detect_button_pressed("front");
+    ros::Rate loop_rate(10);
+    while(!controller.tactile_module().detect_button_pressed("front")){
+        ros::spinOnce();
+        loop_rate.sleep();
+    }
 
     // 3. Use Motion Module to finger_movement
     controller.motion_module().finger_movement(1);  // Close hand
 
+    bool ball_detected = false;
+    while (!ball_detected and !controller.tactile_module().detect_button_pressed("middle")){
+        if (controller.vision_module().ball_visible()) ball_detected = true;
+        ros::spinOnce();
+        loop_rate.sleep();
+    }
+
     // 4. Use vision module to detect if ball is visible
-    if (controller.vision_module().ball_visible()) {
+    if (ball_detected) {
         controller.set_state(new RequestTaskState());
     }
 
