@@ -4,7 +4,9 @@
 
 #include "avoid_defender.h"
 
-AvoidDefenderState::AvoidDefenderState() {
+AvoidDefenderState::AvoidDefenderState(std::string& task):
+    task(task)
+{
 
 }
 

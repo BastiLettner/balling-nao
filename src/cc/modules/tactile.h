@@ -58,7 +58,7 @@ public:
     //
     // Args:
     //     button_name: The name of the button. Can be 'rear', 'front', 'middle'
-    bool detect_button_pressed(std::string button_name);
+    void detect_button_pressed(std::string button_name);
 
 
 private:

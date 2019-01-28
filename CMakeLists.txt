@@ -70,6 +70,7 @@ add_library(CONTROLLER
         src/cc/errors/not_implemented_error.cc
         src/cc/errors/cmd_not_understood_error.cc
         src/cc/modules/tactile.cc
+        src/cc/modules/motion_library.h
         )
 link_libraries(CONTROLLER ${catkin_LIBRARIES} ${MOTION} ${VISION} ${SPEECH})
 

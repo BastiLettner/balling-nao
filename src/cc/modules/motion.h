@@ -11,6 +11,9 @@
 #include <balling_nao/MoveJointsResponse.h>
 
 
+struct BaseMotion;
+
+
 class Motion {
 
 public:
@@ -73,7 +76,7 @@ public:
     //     True: Movement successful
     //     False: Movement incomplete
     //
-    bool check_movement_success(std::vector<float>& angles_request, std::vector<float>& angle_response);
+    bool check_movement_success(std::vector<float>& angles_request, std::vector<float>& angle_response, float thresh);
 
     // Request a hand action. (Open or close)
     //
@@ -90,6 +93,8 @@ public:
     void walk_to_position(double x, double y, double theta);
 
     void stop_walking();
+
+    void perform_standard_motion(BaseMotion& motion);
 
 private:
 

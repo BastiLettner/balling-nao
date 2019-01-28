@@ -31,7 +31,7 @@ public:
 
     const std::string get_state_name() override { return _state_name; }
 
-    const std::string task;  // The task (dunk or throw) from the RequestTaskState. Need to be carried by this state.
+    std::string task;  // The task (dunk or throw) from the RequestTaskState. Need to be carried by this state.
 
 private:
 

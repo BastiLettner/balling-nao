@@ -21,16 +21,24 @@ class NaoController(object):
         for task in task_list:
             self.nao_proxy.killTask(task[1])
 
-        if(req.action_type == 0):
-	    self.nao_proxy.openHand(req.hand_name)
+        if req.action_type == 0 :
+            print "Opening Hand"
+            self.nao_proxy.openHand(req.hand_name)
+            self.set_stiffness(req.hand_name, 0.0)
 
-        elif(req.action_type == 1):
+        elif req.action_type == 1:
+            print "Closing Hand"
+            self.set_stiffness(req.hand_name, 1.0)
             self.nao_proxy.closeHand(req.hand_name)
 
         else:
             raise InvalidArgumentError("Received invalid argument for req.action_type: {}".format(req.action_type))
 
         return True
+
+    def set_stiffness(self, name, val):
+        for i in xrange(20):
+            self.nao_proxy.setStiffnesses(name, val)
 
 if __name__ == '__main__':
 
