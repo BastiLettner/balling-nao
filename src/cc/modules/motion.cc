@@ -14,6 +14,7 @@
 #include "balling_nao/GetTransform.h"
 #include "balling_nao/MoveJoints.h"
 #include "balling_nao/HandControl.h"
+#include "balling_nao/GoToPosture.h"
 #include "motion_library.h"
 
 
@@ -24,6 +25,7 @@ Motion::Motion(ros::NodeHandle &node_handle)
     _client_get_transform = node_handle.serviceClient<balling_nao::GetTransform>("get_transformation");
     _client_set_joints = node_handle.serviceClient<balling_nao::MoveJoints>("set_joints_server");
     _client_set_hands = node_handle.serviceClient<balling_nao::HandControl>("set_hands_server");
+    _client_set_posture = node_handle.serviceClient<balling_nao::GoToPosture>("go_to_posture_server");
     _body_stiffness_enable = node_handle.serviceClient<std_srvs::Empty>("/body_stiffness/enable");
     _body_stiffness_disable = node_handle.serviceClient<std_srvs::Empty>("/body_stiffness/disable");
     _walk_pub=node_handle.advertise<geometry_msgs::Pose2D>("/cmd_pose", 1);
@@ -33,6 +35,7 @@ Motion::Motion(ros::NodeHandle &node_handle)
 
 void Motion::finger_movement(int type) { //0 to open, 1 to close
     while(! request_hand_action("RHand", type));
+    std_srvs::Empty empty;
 }
 
 std::vector<float> Motion::request_cartesian_movement(std::string &name, std::vector<float> &position, float time) {
@@ -131,7 +134,22 @@ void Motion::perform_standard_motion(BaseMotion& motion) {
     request_joint_movement(motion.names, motion.angles, motion.speed, response);
 
     while(!check_movement_success(motion.angles, response.new_angles, motion.success_threshold)) {
-        request_joint_movement(motion.names, motion.angles, 0.2, response);
+        request_joint_movement(motion.names, motion.angles, motion.speed, response);
     }
 
+}
+
+void Motion::go_to_posture(std::string posture_name, float speed) {
+    std_srvs::Empty empty;
+    _body_stiffness_enable.call(empty); // setting stiffness before going into posture
+
+    balling_nao::GoToPosture srv;
+    srv.request.posture_name = posture_name;
+    srv.request.speed = speed;
+    if(_client_set_posture.call(srv)){
+        return;
+    }
+    else{
+        throw std::runtime_error("Could not send posture request");
+    }
 }

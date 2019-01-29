@@ -96,6 +96,8 @@ public:
 
     void perform_standard_motion(BaseMotion& motion);
 
+    void go_to_posture(std::string posture_name, float speed);
+
 private:
 
     ros::ServiceClient _client_get_position;
@@ -103,6 +105,8 @@ private:
     ros::ServiceClient _client_get_transform;
     ros::ServiceClient _client_set_joints;
     ros::ServiceClient _client_set_hands;
+    ros::ServiceClient _client_set_posture;
+
 
     // Publisher to nao walking
     ros::Publisher _walk_pub;

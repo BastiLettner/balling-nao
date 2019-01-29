@@ -13,4 +13,5 @@
   <node pkg="balling_nao" type="hand_service.py" name="hand_service" required="true" args="$(arg nao_ip) $(arg nao_port)" output="screen"/>
 
   <node pkg="balling_nao" type="position_service.py" name="position_service" required="true" args="$(arg nao_ip) $(arg nao_port)" output="screen"/>
+
 </launch>

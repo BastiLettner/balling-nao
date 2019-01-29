@@ -7,6 +7,7 @@
 #include <iostream>
 #include "../states/take_ball.h"
 
+
 Controller::Controller(ros::NodeHandle& node_handle):
     _current_state(new TakeBallState()),
     _motion(node_handle),
@@ -53,6 +54,8 @@ void Controller::run() {
         loop_rate.sleep();
         warmup--;
     }
+
+    _motion.go_to_posture("StandInit",0.5);
 
     // As long as we don't enter the 'Done' state we move on
     while(_current_state->get_state_name() != "Done") {

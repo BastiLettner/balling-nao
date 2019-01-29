@@ -13,7 +13,9 @@ from balling_nao.srv import GetTransform, \
     GetPosition,\
     GetPositionResponse,\
     Movement,\
-    MovementResponse
+    MovementResponse, \
+    GoToPosture, \
+    GoToPostureResponse
 
 FRAME_TORSO = 0
 FRAME_WORLD = 1
@@ -25,11 +27,14 @@ class NaoController(object):
     def __init__(self, ip, port):
 
         self.nao_proxy = ALProxy("ALMotion", ip, port)
+        self.posture_proxy = ALProxy("ALRobotPosture", ip, port)
         rospy.init_node('move_joints_server')
         self.listener = tf.TransformListener()
         rospy.Service("get_position_server", GetPosition, self.handle_position_request)
         rospy.Service("set_position_server", Movement, self.handle_movement_request)
         rospy.Service("get_transformation", GetTransform, self.handle_transform_request)
+        rospy.Service("go_to_posture_server", GoToPosture, self.handle_posture_request)
+
 
     def handle_position_request(self, request):
 
@@ -95,6 +100,20 @@ class NaoController(object):
         response = GetTransformResponse()
         response.H = result
         return response
+
+    def handle_posture_request(self, request):
+        """
+
+        :return: bool response
+        """
+        response = GoToPostureResponse()
+        posture_name = request.posture_name
+        speed = request.speed
+
+        self.posture_proxy.goToPosture(posture_name, speed)
+
+        return response
+
 
 
 if __name__ == '__main__':

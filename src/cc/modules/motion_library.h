@@ -9,7 +9,7 @@
 #include <string>
 
 
-float PI_180 = (float)3.141592/180;
+float PI_180 = (float)3.141592/180; // for conversion from degree to rad
 
 
 struct BaseMotion {
@@ -51,6 +51,19 @@ namespace MOTIONS {
             0.2,
             15.0
             );
+
+    BaseMotion CLOSE_RHAND = BaseMotion(
+            {"RHand"},
+            {20.0f*PI_180},
+            0.2,
+            15.0
+            );
+
+    BaseMotion OPEN_RHAND = BaseMotion(
+            {"RHand"},
+            {50.0f*PI_180},
+            0.2,
+            15.0);
 
 }
 
