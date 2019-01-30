@@ -37,12 +37,12 @@ namespace NaoCameraParameters {
 }
 
 int huelow = 0;
-int huehigh = 0;
+int huehigh = 70;
 int erosion_size = 0;
 int dilation_size = 0;
-int ball_detection_area = 2000;
+int ball_detection_area = 1800;
 
-int hoop_id = 0;
+int hoop_id = 2;
 int defender_id = 1;
 
 Vision::Vision(ros::NodeHandle &node_handle): _it(node_handle) {
@@ -132,10 +132,10 @@ void Vision::detect_marker() {
     Vision::_aruco_markers.clear();
     Vision::_marker_detector.detect(Vision::_current_image, Vision::_aruco_markers);
     if (not Vision::_aruco_markers.empty()) {
-
-        Vision::_aruco_markers[0].calculateExtrinsics(Vision::_marker_size, Vision::_cam_params, true);
-        Vision::_aruco_markers[0].draw(Vision::_current_image, cv::Scalar(0, 255, 255), 2);
-        Vision::_marker_mat_t = Vision::_aruco_markers[0].Tvec;
+        for(size_t i = 0; i < _aruco_markers.size(); i++) {
+            Vision::_aruco_markers[i].calculateExtrinsics(Vision::_marker_size, Vision::_cam_params, true);
+            Vision::_aruco_markers[i].draw(Vision::_current_image, cv::Scalar(0, 255, 255), 2);
+        }
     }
 
     cv::imshow("Marker Image", Vision::_current_image);
@@ -164,14 +164,20 @@ void Vision::tf_publisher(std::vector<float>& point, std::string parent_frame, s
 
 bool Vision::hoop_visible(){
     for(size_t i = 0; i < _aruco_markers.size(); i++){
-        if(_aruco_markers[i].id == hoop_id) return true;
+        if(_aruco_markers[i].id == hoop_id) {
+            Vision::_marker_mat_t_hoop = Vision::_aruco_markers[i].Tvec;
+            return true;
+        }
     }
     return false;
 };
 
 bool Vision::defender_visible(){
     for(size_t i = 0; i < _aruco_markers.size(); i++){
-        if(_aruco_markers[i].id == defender_id) return true;
+        if(_aruco_markers[i].id == defender_id) {
+            Vision::_marker_mat_t_defender = Vision::_aruco_markers[i].Tvec;
+            return true;
+        }
     }
     return false;
 };

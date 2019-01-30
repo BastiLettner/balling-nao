@@ -15,6 +15,8 @@ class DetectHoopState: public State {
 
 public:
 
+    DetectHoopState();
+
     void go_next(Controller& controller) override;
 
     const std::string get_state_name() override { return _state_name; }

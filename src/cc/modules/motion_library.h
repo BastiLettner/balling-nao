@@ -40,7 +40,7 @@ namespace MOTIONS {
 
     BaseMotion REQUEST_BALL_POSITION = BaseMotion(
             {"RShoulderPitch", "RShoulderRoll", "RElbowYaw", "RWristYaw", "RElbowRoll"},
-            {50.0f*PI_180, -5.0f*PI_180, 110.0f*PI_180, 100.0f*PI_180, 85.0f*PI_180},
+            {50.0f*PI_180, -5.0f*PI_180, 110.0f*PI_180, 95.0f*PI_180, 85.0f*PI_180},
             0.2,
             15.0
             );

@@ -6,6 +6,7 @@
 #include "../states/request_ball.h"
 #include <iostream>
 #include "../states/take_ball.h"
+#include "../states/detect_hoop.h"
 
 
 Controller::Controller(ros::NodeHandle& node_handle):

@@ -41,7 +41,6 @@ void TakeBallState::go_next(Controller &controller) {
     size_t attempts = 0;
     while (!ball_detected and attempts < 30) { // Take three second to look for the ball
 
-        // ball detection doesnt work for our orange ball atm. TODO: remove this line and always true if
         if (controller.vision_module().ball_visible()){
             ball_detected = true;
             controller.speech_module().talk("thank you");

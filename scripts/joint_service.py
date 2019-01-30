@@ -10,8 +10,8 @@ from balling_nao.srv import MoveJoints, MoveJointsResponse
 NAO_LIMITS = {
     "HeadYaw": [-2, 2],
     "HeadPitch": [-0.45, 0.45],
-    "LShoulderRoll":[0.3, 1.3],
-    "LShoulderPitch": [-2, 2]
+    "RShoulderRoll":[0.3, 1.3],
+    "RShoulderPitch": [-2, 2]
 }
 
 
