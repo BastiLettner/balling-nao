@@ -21,16 +21,17 @@ void SearchDefenderState::go_next(Controller &controller) {
     // 1. if defender visible: move to AvoidDefenderState
     //    if defender not visible: move to DetectHoopState
     SEARCH_MODE mode = SEARCH_MODE::SIMPLE;
-    cv::Mat position;
-    std::function<bool(cv::Mat)> goal_function = std::bind(&Vision::defender_visible, &controller.vision_module(), std::placeholders::_1);
-    auto f = [&](cv::Mat) { return controller.vision_module().defender_visible(position); };
+    float found_at_head_angle;
+    std::function<bool ()> f = [&]() { return controller.vision_module().defender_visible(); };
     bool defender_visible = controller.brain().search().search_routine(
             mode,
             f,
-            position
+            found_at_head_angle
             );
 
     if (defender_visible) {
+        controller.speech_module().talk("Found Defender");
+        controller.motion_module().walk_to_position(0.0, 0.0, found_at_head_angle);
         controller.set_state(new AvoidDefenderState(task));
     }
     else {

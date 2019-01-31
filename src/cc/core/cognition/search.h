@@ -22,15 +22,15 @@ public:
 
     explicit Search(Motion& motion);
 
-    bool search_routine(SEARCH_MODE& mode, std::function<bool(cv::Mat)>& goal_function, cv::Mat& position);
+    bool search_routine(SEARCH_MODE& mode, std::function<bool()>& goal_function, float& found_at_head_angle);
 
-    bool simple_search(cv::Mat& position, std::function<bool(cv::Mat)>& goal_function);
+    bool simple_search(float& found_at_head_angle, std::function<bool()>& goal_function);
 
-    bool intermediate_search(cv::Mat& position, std::function<bool(cv::Mat)>& goal_function);
+    bool intermediate_search(float& found_at_head_angle, std::function<bool()>& goal_function);
 
-    bool advanced_search(cv::Mat& position, std::function<bool(cv::Mat)>& goal_function);
+    bool advanced_search(float& found_at_head_angle, std::function<bool()>& goal_function);
 
-    bool check_goal(cv::Mat& position, std::function<bool(cv::Mat)>& goal_function, bool& has_found);
+    bool check_goal(std::function<bool()>& goal_function, bool& has_found);
 
 private:
 

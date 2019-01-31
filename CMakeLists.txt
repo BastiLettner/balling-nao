@@ -75,7 +75,7 @@ add_library(CONTROLLER
         src/cc/core/brain.h
         src/cc/core/brain.cc
         src/cc/core/cognition/search.cc
-        )
+        src/cc/sensors_actors/motion_library.cc)
 link_libraries(CONTROLLER ${catkin_LIBRARIES} ${MOTION} ${VISION} ${SPEECH})
 
 catkin_install_python(PROGRAMS

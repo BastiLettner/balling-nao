@@ -185,16 +185,16 @@ bool Vision::hoop_visible(cv::Mat &position) {
 };
 
 
-//bool Vision::defender_visible() {
-//
-//    for(size_t i = 0; i < _aruco_markers.size(); i++){
-//        if(_aruco_markers[i].id == defender_id) {
-//            Vision::_marker_mat_t_defender = Vision::_aruco_markers[i].Tvec;
-//            return true;
-//        }
-//    }
-//    return false;
-//}
+bool Vision::defender_visible() {
+
+    for(size_t i = 0; i < _aruco_markers.size(); i++){
+        if(_aruco_markers[i].id == defender_id) {
+            Vision::_marker_mat_t_defender = Vision::_aruco_markers[i].Tvec;
+            return true;
+        }
+    }
+    return false;
+}
 
 
 bool Vision::defender_visible(cv::Mat &position) {
