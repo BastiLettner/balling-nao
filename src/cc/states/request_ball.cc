@@ -3,7 +3,7 @@
 //
 
 #include "request_ball.h"
-#include "../modules/controller.h"
+#include "../core/controller.h"
 #include "done.h"
 #include "take_ball.h"
 #include <assert.h>

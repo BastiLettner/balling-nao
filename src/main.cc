@@ -1,5 +1,5 @@
 #include <ros/ros.h>
-#include "../src/cc/modules/controller.h"
+#include "../src/cc/core/controller.h"
 
 
 int main(int argc, char** argv) {

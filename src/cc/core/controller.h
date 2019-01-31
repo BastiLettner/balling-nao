@@ -5,10 +5,7 @@
 #ifndef BALLING_NAO_CONTROLLER_H
 #define BALLING_NAO_CONTROLLER_H
 
-#include "motion.h"
-#include "speech.h"
-#include "vision.h"
-#include "tactile.h"
+#include "brain.h"
 #include "../states/state.h"
 #include <memory>
 
@@ -40,10 +37,11 @@ public:
     // The main function of the controller
     void run();
 
-    Speech& speech_module() { return _speech; }
-    Vision& vision_module() { return _vision; }
-    Motion& motion_module() { return _motion; }
-    Tactile& tactile_module() { return _tactile; }
+    Speech& speech_module() { return _brain.speech_module(); }
+    Vision& vision_module() { return _brain.vision_module(); }
+    Motion& motion_module() { return _brain.motion_module(); }
+    Tactile& tactile_module() { return _brain.tactile_module(); }
+    Brain& brain() { return _brain; }
 
     // Set the current state.
     // This function will take ownership of the state passed to it
@@ -55,11 +53,8 @@ public:
     void set_state(State* state);
 
 private:
-
-    Motion _motion;
-    Vision _vision;
-    Speech _speech;
-    Tactile _tactile;
+    
+    Brain _brain;
 
     std::unique_ptr<State> _current_state;
 

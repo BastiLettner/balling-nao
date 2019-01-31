@@ -3,7 +3,7 @@
 //
 
 #include "detect_hoop.h"
-#include "../modules/controller.h"
+#include "../core/controller.h"
 
 DetectHoopState::DetectHoopState():
     State()

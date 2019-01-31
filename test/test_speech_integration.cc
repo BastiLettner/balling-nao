@@ -2,7 +2,7 @@
 // Created by hrs_b on 15.01.19.
 //
 
-#include "../src/cc/modules/speech.h"
+#include "../src/cc/sensors_actors/speech.h"
 #include "../src/cc/errors/cmd_not_understood_error.h"
 
 int main(int argc, char* argv[]) {

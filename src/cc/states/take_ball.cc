@@ -3,9 +3,9 @@
 //
 
 #include "take_ball.h"
-#include "../modules/controller.h"
+#include "../core/controller.h"
 #include "request_task.h"
-#include "../modules/motion_library.h"
+#include "../sensors_actors/motion_library.h"
 
 
 TakeBallState::TakeBallState():

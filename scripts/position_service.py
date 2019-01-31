@@ -28,6 +28,9 @@ class NaoController(object):
 
         self.nao_proxy = ALProxy("ALMotion", ip, port)
         self.posture_proxy = ALProxy("ALRobotPosture", ip, port)
+        self.autonomous_proxy = ALProxy("ALAutonomousMoves", ip, port)
+        self.autonomous_proxy.setExpressiveListeningEnabled(False)
+
         rospy.init_node('move_joints_server')
         self.listener = tf.TransformListener()
         rospy.Service("get_position_server", GetPosition, self.handle_position_request)

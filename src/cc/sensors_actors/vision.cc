@@ -162,7 +162,7 @@ void Vision::tf_publisher(std::vector<float>& point, std::string parent_frame, s
 
 }
 
-bool Vision::hoop_visible(){
+bool Vision::hoop_visible() {
     for(size_t i = 0; i < _aruco_markers.size(); i++){
         if(_aruco_markers[i].id == hoop_id) {
             Vision::_marker_mat_t_hoop = Vision::_aruco_markers[i].Tvec;
@@ -170,15 +170,40 @@ bool Vision::hoop_visible(){
         }
     }
     return false;
-};
+}
 
-bool Vision::defender_visible(){
+
+bool Vision::hoop_visible(cv::Mat &position) {
     for(size_t i = 0; i < _aruco_markers.size(); i++){
-        if(_aruco_markers[i].id == defender_id) {
-            Vision::_marker_mat_t_defender = Vision::_aruco_markers[i].Tvec;
+        if(_aruco_markers[i].id == hoop_id) {
+            Vision::_marker_mat_t_hoop = Vision::_aruco_markers[i].Tvec;
+            position = Vision::_aruco_markers[i].Tvec;
             return true;
         }
     }
     return false;
 };
 
+
+//bool Vision::defender_visible() {
+//
+//    for(size_t i = 0; i < _aruco_markers.size(); i++){
+//        if(_aruco_markers[i].id == defender_id) {
+//            Vision::_marker_mat_t_defender = Vision::_aruco_markers[i].Tvec;
+//            return true;
+//        }
+//    }
+//    return false;
+//}
+
+
+bool Vision::defender_visible(cv::Mat &position) {
+    for(size_t i = 0; i < _aruco_markers.size(); i++){
+        if(_aruco_markers[i].id == defender_id) {
+            Vision::_marker_mat_t_defender = Vision::_aruco_markers[i].Tvec;
+            position = Vision::_aruco_markers[i].Tvec;
+            return true;
+        }
+    }
+    return false;
+}

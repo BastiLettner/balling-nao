@@ -3,7 +3,7 @@
 //
 
 #include "cmd_not_understood_error.h"
-#include "../modules/speech.h"
+#include "../sensors_actors/speech.h"
 #include "../states/state.h"
 
 

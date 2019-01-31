@@ -10,11 +10,9 @@
 
 
 Controller::Controller(ros::NodeHandle& node_handle):
-    _current_state(new TakeBallState()),
-    _motion(node_handle),
-    _vision(node_handle),
-    _tactile(node_handle),
-    _speech(node_handle)
+    _current_state(new RequestBallState()),
+    _brain(node_handle)
+
 {
     // Nothing to do here
 }
@@ -29,7 +27,7 @@ void Controller::go_next() {
     std::string msg("Nao entered ");
     msg += _current_state->get_state_name();
 
-    _speech.talk(msg);
+    speech_module().talk(msg);
 
     _current_state->go_next(*this);
 
@@ -56,7 +54,7 @@ void Controller::run() {
         warmup--;
     }
 
-    _motion.go_to_posture("StandInit",0.5);
+    motion_module().go_to_posture("StandInit",0.5);
 
     // As long as we don't enter the 'Done' state we move on
     while(_current_state->get_state_name() != "Done") {

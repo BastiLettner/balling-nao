@@ -2,7 +2,7 @@
 // Created by hrs_b on 15.01.19.
 //
 
-#include "../src/cc/modules/controller.h"
+#include "../src/cc/core/controller.h"
 
 int main(int argc, char* argv[]) {
 

@@ -42,7 +42,8 @@ public:
     // Returns
     //     true: Defender visible
     //     false: Defender not visible
-    bool defender_visible();
+    //bool defender_visible();
+    bool defender_visible(cv::Mat& position);
 
     // Tell the caller whether the hoop is visible
     //
@@ -50,6 +51,7 @@ public:
     //     true: hoop visible
     //     false: hoop not visible
     bool hoop_visible();
+    bool hoop_visible(cv::Mat& position);
 
     cv::Mat& get_current_image() { return _current_image; }
     cv::Mat& get_marker_mat_t_defender() { return _marker_mat_t_defender; }

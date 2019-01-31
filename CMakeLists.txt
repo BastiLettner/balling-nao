@@ -42,19 +42,19 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} /usr/local/lib/cmake)
 find_package(aruco REQUIRED)
 
 
-add_library(MOTION src/cc/modules/motion.cc)
+add_library(MOTION src/cc/sensors_actors/motion.cc)
 link_libraries(MOTION ${catkin_LIBRARIES})
 
 
-add_library(VISTION src/cc/modules/vision.cc)
+add_library(VISTION src/cc/sensors_actors/vision.cc)
 link_libraries(VISTION ${catkin_LIBRARIES} ${aruco_LIBS})
 
 
-add_library(SPEECH src/cc/modules/speech.cc)
+add_library(SPEECH src/cc/sensors_actors/speech.cc)
 link_libraries(SPEECH ${catkin_LIBRARIES})
 
 add_library(CONTROLLER
-        src/cc/modules/controller.cc
+        src/cc/core/controller.cc
         src/cc/states/search_defender.cc
         src/cc/states/take_ball.cc
         src/cc/states/state.cc
@@ -70,8 +70,11 @@ add_library(CONTROLLER
         src/cc/errors/balling_nao_error.cc
         src/cc/errors/not_implemented_error.cc
         src/cc/errors/cmd_not_understood_error.cc
-        src/cc/modules/tactile.cc
-        src/cc/modules/motion_library.h
+        src/cc/sensors_actors/tactile.cc
+        src/cc/sensors_actors/motion_library.h
+        src/cc/core/brain.h
+        src/cc/core/brain.cc
+        src/cc/core/cognition/search.cc
         )
 link_libraries(CONTROLLER ${catkin_LIBRARIES} ${MOTION} ${VISION} ${SPEECH})
 
@@ -82,7 +85,7 @@ catkin_install_python(PROGRAMS
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
-add_executable(BALLER src/main.cc)
+add_executable(BALLER src/main.cc src/cc/core/cognition/search.h src/cc/core/cognition/search.cc)
 include_directories(${Boost_INCLUDE_DIRS})
 target_link_libraries(BALLER ${catkin_LIBRARIES} ${Boost_LIBRARIES} ${CONTROLLER})
 

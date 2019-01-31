@@ -52,6 +52,20 @@ namespace MOTIONS {
             15.0
             );
 
+    BaseMotion HEAD_LEFT = BaseMotion(
+            {"HeadYaw", "HeadPitch"},
+            {110.0f*PI_180, 0.0f*PI_180},
+            0.2,
+            15.0
+            );
+
+    BaseMotion HEAD_RIGHT = BaseMotion(
+            {"HeadYaw", "HeadPitch"},
+            {-110.0f*PI_180, 0.0f*PI_180},
+            0.2,
+            15.0
+            );
+
     BaseMotion CLOSE_RHAND = BaseMotion(
             {"RHand"},
             {20.0f*PI_180},
