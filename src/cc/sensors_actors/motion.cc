@@ -127,14 +127,16 @@ bool Motion::check_movement_success(std::vector<float> &angles_request, std::vec
 }
 
 
-void Motion::perform_standard_motion(BaseMotion& motion) {
+void Motion::perform_standard_motion(BaseMotion& motion, bool check) {
 
     balling_nao::MoveJointsResponse response;
 
     request_joint_movement(motion.names, motion.angles, motion.speed, response);
 
-    while(!check_movement_success(motion.angles, response.new_angles, motion.success_threshold)) {
-        request_joint_movement(motion.names, motion.angles, motion.speed, response);
+    if (true == check){ //default behavior
+        while(!check_movement_success(motion.angles, response.new_angles, motion.success_threshold)) {
+            request_joint_movement(motion.names, motion.angles, motion.speed, response);
+        }
     }
 
 }
@@ -152,4 +154,9 @@ void Motion::go_to_posture(std::string posture_name, float speed) {
     else{
         throw std::runtime_error("Could not send posture request");
     }
+}
+
+void Motion::disable_stiffness(int iterations){
+    std_srvs::Empty empty;
+    for (int i =0; i <iterations; i++) _body_stiffness_disable.call(empty);
 }

@@ -15,11 +15,13 @@ class DetectHoopState: public State {
 
 public:
 
-    DetectHoopState();
+    DetectHoopState(std::string& task);
 
     void go_next(Controller& controller) override;
 
     const std::string get_state_name() override { return _state_name; }
+
+    std::string task;  // The task (dunk or throw) from the RequestTaskState. Need to be carried by this state.
 
 private:
 

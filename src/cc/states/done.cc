@@ -4,6 +4,7 @@
 
 #include "done.h"
 #include "../errors/balling_nao_error.h"
+#include "../core/controller.h"
 
 
 DoneState::DoneState():

@@ -94,9 +94,11 @@ public:
 
     void stop_walking();
 
-    void perform_standard_motion(BaseMotion& motion);
+    void perform_standard_motion(BaseMotion& motion, bool check = true);
 
     void go_to_posture(std::string posture_name, float speed);
+
+    void disable_stiffness(int iterations);
 
 private:
 

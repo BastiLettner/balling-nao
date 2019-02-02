@@ -35,7 +35,7 @@ void SearchDefenderState::go_next(Controller &controller) {
         controller.set_state(new AvoidDefenderState(task));
     }
     else {
-        controller.set_state(new DetectHoopState());
+        controller.set_state(new DetectHoopState(task));
     }
 
 }

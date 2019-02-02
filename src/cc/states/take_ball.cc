@@ -7,6 +7,10 @@
 #include "request_task.h"
 #include "../sensors_actors/motion_library.h"
 
+//those should be cleaned up, used to debug
+#include "execute_dunk_motion.h"
+#include "execute_throw_motion.h"
+
 
 TakeBallState::TakeBallState():
     State()
@@ -39,6 +43,7 @@ void TakeBallState::go_next(Controller &controller) {
     controller.motion_module().perform_standard_motion(MOTIONS::LOOK_AT_BALL);
     ros::Rate loop_rate(10);
     size_t attempts = 0;
+    loop_rate.sleep();
     while (!ball_detected and attempts < 30) { // Take three second to look for the ball
 
         if (controller.vision_module().ball_visible()){
@@ -54,7 +59,7 @@ void TakeBallState::go_next(Controller &controller) {
 
     // 4. Use vision module to detect if ball is visible
     if (ball_detected) {
-        controller.set_state(new RequestTaskState());
+        controller.set_state(new ExecuteThrowMotionState());
     }
 
     // catch case if robot just can not identify the ball in his hand

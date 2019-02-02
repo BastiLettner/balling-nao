@@ -1,8 +1,0 @@
-//
-// Created by hrs_b on 10.01.19.
-//
-
-#ifndef BALLING_NAO_MODE_INTO_THROW_DIST_H
-#define BALLING_NAO_MODE_INTO_THROW_DIST_H
-
-#endif //BALLING_NAO_MODE_INTO_THROW_DIST_H

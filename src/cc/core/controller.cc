@@ -5,8 +5,11 @@
 #include "controller.h"
 #include "../states/request_ball.h"
 #include <iostream>
+
+//to debug only
 #include "../states/take_ball.h"
 #include "../states/detect_hoop.h"
+#include "../states/execute_throw_motion.h"
 
 
 
@@ -64,7 +67,8 @@ void Controller::run() {
         ros::spinOnce();
         loop_rate.sleep();
     }
-
+    motion_module().go_to_posture("Crouch", 0.2);
+    motion_module().disable_stiffness(3);
     LOG("Reached Done State");
 
 }

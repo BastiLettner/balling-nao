@@ -5,7 +5,7 @@
 #include "motion_library.h"
 
 
-float PI_180 = (float)3.141592/180; // for conversion from degree to rad
+const float PI_180 = (float)3.141592/180; // for conversion from degree to rad
 
 
 namespace MOTIONS {
@@ -71,6 +71,21 @@ namespace MOTIONS {
             0.2,
             15.0
     );
+
+    BaseMotion EXTEND_RARM = BaseMotion(
+            {"RShoulderPitch", "RShoulderRoll", "RElbowYaw", "RWristYaw", "RElbowRoll"},
+            {-20.0f*PI_180, -5.0f*PI_180, 1.0f*PI_180, 1.0f*PI_180, 1.0f*PI_180},
+            0.3,
+            15.0
+    );
+
+    BaseMotion PULLBACK_RARM = BaseMotion(
+            {"RShoulderPitch", "RShoulderRoll", "RElbowYaw", "RWristYaw", "RElbowRoll"},
+            {115.0f*PI_180, -5.0f*PI_180, 90.0f*PI_180, 95.0f*PI_180, 1.0f*PI_180},
+            0.2,
+            15.0
+    );
+
 
 }
 

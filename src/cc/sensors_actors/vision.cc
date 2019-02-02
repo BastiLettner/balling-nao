@@ -38,12 +38,12 @@ namespace NaoCameraParameters {
 
 int huelow = 0;
 int huehigh = 70;
-int erosion_size = 0;
-int dilation_size = 0;
+int erosion_size = 2;
+int dilation_size = 1;
 int ball_detection_area = 1800;
 
-int hoop_id = 2;
-int defender_id = 1;
+int hoop_id = 2; //use chev.me/arucogen to generate aruco markers
+int defender_id = 3;
 
 Vision::Vision(ros::NodeHandle &node_handle): _it(node_handle) {
     Vision::_image_sub = _it.subscribe("/nao_robot/camera/top/camera/image_raw", 1, &Vision::image_reception, this);
@@ -67,8 +67,6 @@ void Vision::image_reception(const sensor_msgs::ImageConstPtr &msg) {
     int const max_elem = 2;
     int const max_kernel_size = 21;
 
-    namedWindow("HSV image");
-    namedWindow("Current Image");
     namedWindow("Blob Extraction");
     namedWindow("TrackBars");
     createTrackbar( "Lower boundary of Hue", "TrackBars", &huelow, 255);
@@ -119,8 +117,6 @@ bool Vision::ball_visible(){
         }
     }
 
-    imshow("HSV image", HSVImage);
-    imshow("Current Image", Vision::_current_image);
     imshow("Blob Extraction", dilated_image);
 
     return ball_detected;
@@ -207,3 +203,5 @@ bool Vision::defender_visible(cv::Mat &position) {
     }
     return false;
 }
+
+//void Vision::marker_position(){}

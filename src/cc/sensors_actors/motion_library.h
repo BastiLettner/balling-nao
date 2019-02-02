@@ -9,7 +9,7 @@
 #include <string>
 
 
-extern float PI_180;
+extern const float PI_180;
 
 
 struct BaseMotion {
@@ -40,6 +40,9 @@ extern BaseMotion HEAD_RIGHT;
 extern BaseMotion HEAD_LEFT;
 extern BaseMotion CLOSE_RHAND;
 extern BaseMotion OPEN_RHAND;
+extern BaseMotion EXTEND_RARM;
+extern BaseMotion PULLBACK_RARM;
+extern BaseMotion THROW1;
 
 }
 
