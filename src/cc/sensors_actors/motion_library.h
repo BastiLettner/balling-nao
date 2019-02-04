@@ -43,6 +43,11 @@ extern BaseMotion OPEN_RHAND;
 extern BaseMotion EXTEND_RARM;
 extern BaseMotion PULLBACK_RARM;
 extern BaseMotion THROW1;
+extern BaseMotion DUNK_MOTION_1;
+extern BaseMotion DUNK_MOTION_2;
+extern BaseMotion DUNK_MOTION_3;
+extern BaseMotion DUNK_MOTION_4;
+
 
 }
 

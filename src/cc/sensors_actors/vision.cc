@@ -42,12 +42,12 @@ int erosion_size = 2;
 int dilation_size = 1;
 int ball_detection_area = 1800;
 
-int hoop_id = 2; //use chev.me/arucogen to generate aruco markers
-int defender_id = 3;
+int hoop_id = 1; //use chev.me/arucogen to generate aruco markers
+int defender_id = 0;
 
 Vision::Vision(ros::NodeHandle &node_handle): _it(node_handle) {
     Vision::_image_sub = _it.subscribe("/nao_robot/camera/top/camera/image_raw", 1, &Vision::image_reception, this);
-    _cam_params.setParams(NaoCameraParameters::cameraP, NaoCameraParameters::dist, Size(640, 480));
+    _cam_params.setParams(NaoCameraParameters::cameraP, NaoCameraParameters::dist, Size(1280, 960));
 }
 
 void Vision::image_reception(const sensor_msgs::ImageConstPtr &msg) {
@@ -169,18 +169,6 @@ bool Vision::hoop_visible() {
 }
 
 
-bool Vision::hoop_visible(cv::Mat &position) {
-    for(size_t i = 0; i < _aruco_markers.size(); i++){
-        if(_aruco_markers[i].id == hoop_id) {
-            Vision::_marker_mat_t_hoop = Vision::_aruco_markers[i].Tvec;
-            position = Vision::_aruco_markers[i].Tvec;
-            return true;
-        }
-    }
-    return false;
-};
-
-
 bool Vision::defender_visible() {
 
     for(size_t i = 0; i < _aruco_markers.size(); i++){
@@ -192,16 +180,5 @@ bool Vision::defender_visible() {
     return false;
 }
 
-
-bool Vision::defender_visible(cv::Mat &position) {
-    for(size_t i = 0; i < _aruco_markers.size(); i++){
-        if(_aruco_markers[i].id == defender_id) {
-            Vision::_marker_mat_t_defender = Vision::_aruco_markers[i].Tvec;
-            position = Vision::_aruco_markers[i].Tvec;
-            return true;
-        }
-    }
-    return false;
-}
 
 //void Vision::marker_position(){}

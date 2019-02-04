@@ -13,7 +13,7 @@ namespace cv {
 }
 
 
-enum SEARCH_MODE { SIMPLE, INTERMEDIATE, ADVANCED };
+enum SEARCH_MODE : int { SIMPLE, INTERMEDIATE, ADVANCED };
 
 
 class Search {

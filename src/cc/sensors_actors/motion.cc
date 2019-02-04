@@ -15,8 +15,8 @@
 #include "balling_nao/MoveJoints.h"
 #include "balling_nao/HandControl.h"
 #include "balling_nao/GoToPosture.h"
+#include "balling_nao/MoveToPosition.h"
 #include "motion_library.h"
-
 
 Motion::Motion(ros::NodeHandle &node_handle)
 {
@@ -26,17 +26,13 @@ Motion::Motion(ros::NodeHandle &node_handle)
     _client_set_joints = node_handle.serviceClient<balling_nao::MoveJoints>("set_joints_server");
     _client_set_hands = node_handle.serviceClient<balling_nao::HandControl>("set_hands_server");
     _client_set_posture = node_handle.serviceClient<balling_nao::GoToPosture>("go_to_posture_server");
+    _client_move_to = node_handle.serviceClient<balling_nao::MoveToPosition>("move_to_position_server");
     _body_stiffness_enable = node_handle.serviceClient<std_srvs::Empty>("/body_stiffness/enable");
     _body_stiffness_disable = node_handle.serviceClient<std_srvs::Empty>("/body_stiffness/disable");
-    _walk_pub=node_handle.advertise<geometry_msgs::Pose2D>("/cmd_pose", 1);
+    _walk_pub = node_handle.advertise<geometry_msgs::Pose2D>("/cmd_pose", 1);
     _footContact_sub = node_handle.subscribe<std_msgs::Bool>("/foot_contact", 1, &Motion::footContactCallback, this);
 }
 
-
-void Motion::finger_movement(int type) { //0 to open, 1 to close
-    while(! request_hand_action("RHand", type));
-    std_srvs::Empty empty;
-}
 
 std::vector<float> Motion::request_cartesian_movement(std::string &name, std::vector<float> &position, float time) {
 
@@ -73,15 +69,6 @@ void Motion::request_joint_movement(
 
 }
 
-bool Motion::request_hand_action(std::string handName, int state){ //state = 0 to open the hand, 1 to close
-    balling_nao::HandControl srv;
-    srv.request.action_type = state;
-    srv.request.hand_name = handName;
-    if (_client_set_hands.call(srv)){
-        bool success = srv.response.success;
-        return success;
-    }
-}
 
 void Motion::footContactCallback(const std_msgs::BoolConstPtr& contact)
 {
@@ -92,16 +79,33 @@ void Motion::footContactCallback(const std_msgs::BoolConstPtr& contact)
     }
 }
 
-void Motion::walk_to_position(double x, double y, double theta)
-{
-    std_srvs::Empty empty;
-    _body_stiffness_enable.call(empty);
-    ROS_INFO("Requesting to walk");
-    geometry_msgs::Pose2D msg;
-    msg.x = x;
-    msg.y = y;
-    msg.theta = theta;
-    _walk_pub.publish(msg);
+//void Motion::walk_to_position(double x, double y, double theta)
+//{
+//    std_srvs::Empty empty;
+//    _body_stiffness_enable.call(empty);
+//    ROS_INFO("Requesting to walk");
+//    geometry_msgs::Pose2D msg;
+//    msg.x = x;
+//    msg.y = y;
+//    msg.theta = theta;
+//    _walk_pub.publish(msg);
+//}
+
+bool Motion::request_move_to_position(float x, float y, float theta){ //state = 0 to open the hand, 1 to close
+    balling_nao::MoveToPosition srv;
+    //balling_nao::MoveToPositionResponse response;
+    // moveTo function works anti-clockwise, therefore -theta !!!
+
+    srv.request.x = x;
+    srv.request.y = y;
+    srv.request.theta = theta;
+    if (_client_move_to.call(srv)){
+        bool success = srv.response.success;
+        return success;
+    }
+    else {
+        throw std::runtime_error("MoveToPosition request was not successful");
+    }
 }
 
 

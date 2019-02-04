@@ -19,7 +19,7 @@ namespace MOTIONS {
 
     BaseMotion REQUEST_BALL_POSITION = BaseMotion(
             {"RShoulderPitch", "RShoulderRoll", "RElbowYaw", "RWristYaw", "RElbowRoll"},
-            {50.0f*PI_180, -5.0f*PI_180, 110.0f*PI_180, 95.0f*PI_180, 85.0f*PI_180},
+            {40.0f*PI_180, 15.0f*PI_180, 110.0f*PI_180, 75.0f*PI_180, 85.0f*PI_180},
             0.2,
             15.0
     );
@@ -33,14 +33,14 @@ namespace MOTIONS {
 
     BaseMotion HEAD_FAR_LEFT = BaseMotion(
             {"HeadYaw", "HeadPitch"},
-            {110.0f*PI_180, 0.0f*PI_180},
+            {90.0f*PI_180, 0.0f*PI_180},
             0.2,
             15.0
     );
 
     BaseMotion HEAD_FAR_RIGHT = BaseMotion(
             {"HeadYaw", "HeadPitch"},
-            {-110.0f*PI_180, 0.0f*PI_180},
+            {-90.0f*PI_180, 0.0f*PI_180},
             0.2,
             15.0
     );
@@ -60,14 +60,14 @@ namespace MOTIONS {
 
     BaseMotion HEAD_LEFT = BaseMotion(
             {"HeadYaw", "HeadPitch"},
-            {60.0f*PI_180, 0.0f*PI_180},
+            {45.0f*PI_180, 0.0f*PI_180},
             0.2,
             15.0
     );
 
     BaseMotion HEAD_RIGHT = BaseMotion(
             {"HeadYaw", "HeadPitch"},
-            {-60.0f*PI_180, 0.0f*PI_180},
+            {-45.0f*PI_180, 0.0f*PI_180},
             0.2,
             15.0
     );
@@ -85,6 +85,35 @@ namespace MOTIONS {
             0.2,
             15.0
     );
+
+    BaseMotion DUNK_MOTION_1 = BaseMotion(
+            {"RShoulderPitch", "RShoulderRoll", "RElbowYaw", "RWristYaw", "RElbowRoll"},
+            {1.5079641342163086, -1.2932038307189941, 1.9343321323394775, 0.042994022369384766, -0.07367396354675293},
+            0.2,
+            15.0
+            );
+
+    BaseMotion DUNK_MOTION_2 = BaseMotion(
+            {"RShoulderPitch", "RShoulderRoll", "RElbowYaw", "RWristYaw", "RElbowRoll"},
+            {-1.6060560941696167, -1.1045217514038086, 1.7026981115341187, 0.03490658476948738, -0.07827591896057129},
+            0.2,
+            15.0
+    );
+
+    BaseMotion DUNK_MOTION_3 = BaseMotion(
+            {"RShoulderPitch", "RShoulderRoll", "RElbowYaw", "RWristYaw"},
+            {-1.4679961, 0.096600055, 0.0858621, -0.036858081},
+            0.2,
+            15.0
+            );
+
+    BaseMotion DUNK_MOTION_4 = BaseMotion(
+            {"RShoulderPitch", "RShoulderRoll", "RElbowYaw", "RWristYaw", "RElbowRoll"},
+            {-0.03984212875366211, 0.3141592741012573, 0.07972598075866699, 0.4525718688964844, -0.013848066329956055},
+            0.4,
+            15.0
+    );
+
 
 
 }

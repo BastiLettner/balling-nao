@@ -24,6 +24,7 @@ add_service_files(
   MoveJoints.srv
   HandControl.srv
   GoToPosture.srv
+  MoveToPosition.srv
 )
 
 generate_messages(DEPENDENCIES std_msgs)

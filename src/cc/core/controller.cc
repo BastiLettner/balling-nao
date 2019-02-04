@@ -6,17 +6,21 @@
 #include "../states/request_ball.h"
 #include <iostream>
 
+// Todo: remove all states but initial state: request_ball.h
 //to debug only
 #include "../states/take_ball.h"
 #include "../states/detect_hoop.h"
 #include "../states/execute_throw_motion.h"
+#include "../states/execute_dunk_motion.h"
+#include "../states/search_defender.h"
 
 
+// Todo: remove command, this is to start in SearchDefenderState(command)
+std::string command = "dunk ";
 
 Controller::Controller(ros::NodeHandle& node_handle):
-    _current_state(new RequestBallState()),
+    _current_state(new ExecuteDunkMotionState()),
     _brain(node_handle)
-
 {
     // Nothing to do here
 }

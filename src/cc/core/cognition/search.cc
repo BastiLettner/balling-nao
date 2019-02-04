@@ -44,7 +44,7 @@ bool Search::simple_search(float& found_at_angle, std::function<bool()>& goal_fu
     _motion.perform_standard_motion(MOTIONS::HEAD_LEFT);
     check_goal(goal_function, has_found);
     if(has_found) {
-        found_at_angle = MOTIONS::HEAD_FAR_LEFT.angles[0];
+        found_at_angle = MOTIONS::HEAD_LEFT.angles[0];
         _motion.perform_standard_motion(MOTIONS::HEAD_RESTING_POSITION);
         return true;
     }
@@ -53,7 +53,7 @@ bool Search::simple_search(float& found_at_angle, std::function<bool()>& goal_fu
     _motion.perform_standard_motion(MOTIONS::HEAD_RESTING_POSITION);
     check_goal(goal_function, has_found);
     if (has_found) {
-        found_at_angle = MOTIONS::HEAD_FAR_LEFT.angles[0];
+        found_at_angle = MOTIONS::HEAD_RESTING_POSITION.angles[0];
         _motion.perform_standard_motion(MOTIONS::HEAD_RESTING_POSITION);
         return true;
     }
@@ -61,7 +61,7 @@ bool Search::simple_search(float& found_at_angle, std::function<bool()>& goal_fu
     _motion.perform_standard_motion(MOTIONS::HEAD_RIGHT);
     check_goal(goal_function, has_found);
     if (has_found) {
-        found_at_angle = MOTIONS::HEAD_FAR_LEFT.angles[0];
+        found_at_angle = MOTIONS::HEAD_RIGHT.angles[0];
         _motion.perform_standard_motion(MOTIONS::HEAD_RESTING_POSITION);
         return true;
     }
@@ -69,7 +69,7 @@ bool Search::simple_search(float& found_at_angle, std::function<bool()>& goal_fu
     _motion.perform_standard_motion(MOTIONS::HEAD_FAR_RIGHT);
     check_goal(goal_function, has_found);
     if (has_found) {
-        found_at_angle = MOTIONS::HEAD_FAR_LEFT.angles[0];
+        found_at_angle = MOTIONS::HEAD_FAR_RIGHT.angles[0];
         _motion.perform_standard_motion(MOTIONS::HEAD_RESTING_POSITION);
         return true;
     }
@@ -94,7 +94,8 @@ bool Search::check_goal(std::function<bool()>& goal_function, bool& has_found) {
     assert(!has_found);
 
     int attempts = 0;
-    while(!has_found and attempts < 10) {
+    // look for 2 secs (= 20 attempts with loop_rate=10)
+    while(!has_found and attempts < 20) {
         has_found = goal_function();
         ros::spinOnce();
         loop_rate.sleep();

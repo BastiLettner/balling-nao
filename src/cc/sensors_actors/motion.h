@@ -90,8 +90,6 @@ public:
 
     void footContactCallback(const std_msgs::BoolConstPtr& contact);
 
-    void walk_to_position(double x, double y, double theta);
-
     void stop_walking();
 
     void perform_standard_motion(BaseMotion& motion, bool check = true);
@@ -99,6 +97,8 @@ public:
     void go_to_posture(std::string posture_name, float speed);
 
     void disable_stiffness(int iterations);
+
+    bool request_move_to_position(float x, float y, float theta);
 
 private:
 
@@ -108,6 +108,7 @@ private:
     ros::ServiceClient _client_set_joints;
     ros::ServiceClient _client_set_hands;
     ros::ServiceClient _client_set_posture;
+    ros::ServiceClient _client_move_to;
 
 
     // Publisher to nao walking

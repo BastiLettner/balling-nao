@@ -9,19 +9,22 @@
 #include "state.h"
 
 class Controller;
+enum SEARCH_MODE: int;
 
 
 class DetectHoopState: public State {
 
 public:
 
-    DetectHoopState(std::string& task);
+    explicit DetectHoopState(std::string& task);
 
     void go_next(Controller& controller) override;
 
     const std::string get_state_name() override { return _state_name; }
 
     std::string task;  // The task (dunk or throw) from the RequestTaskState. Need to be carried by this state.
+
+    bool state_routine(SEARCH_MODE mode, Controller& controller);
 
 private:
 

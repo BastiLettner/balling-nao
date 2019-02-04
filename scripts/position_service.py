@@ -15,7 +15,9 @@ from balling_nao.srv import GetTransform, \
     Movement,\
     MovementResponse, \
     GoToPosture, \
-    GoToPostureResponse
+    GoToPostureResponse, \
+    MoveToPosition, \
+    MoveToPositionResponse
 
 FRAME_TORSO = 0
 FRAME_WORLD = 1
@@ -37,6 +39,7 @@ class NaoController(object):
         rospy.Service("set_position_server", Movement, self.handle_movement_request)
         rospy.Service("get_transformation", GetTransform, self.handle_transform_request)
         rospy.Service("go_to_posture_server", GoToPosture, self.handle_posture_request)
+        rospy.Service("move_to_position_server", MoveToPosition, self.handle_move_to_position_request)
 
 
     def handle_position_request(self, request):
@@ -116,6 +119,21 @@ class NaoController(object):
         self.posture_proxy.goToPosture(posture_name, speed)
 
         return response
+
+
+    def handle_move_to_position_request(self, request):
+        """
+        :return: bool response, returns true when movement is done. Blocking call.
+        """
+        response = MoveToPositionResponse()
+        x = request.x
+        y = request.y
+        theta = request.theta
+
+        self.nao_proxy.moveTo(x,y, theta)
+
+        return response
+
 
 
 

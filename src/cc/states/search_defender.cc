@@ -31,11 +31,13 @@ void SearchDefenderState::go_next(Controller &controller) {
 
     if (defender_visible) {
         controller.speech_module().talk("Found Defender");
-        controller.motion_module().walk_to_position(0.0, 0.0, found_at_head_angle);
+        ROS_INFO_STREAM("Found defender at angle: ");
+        ROS_INFO_STREAM(found_at_head_angle);
+        controller.motion_module().request_move_to_position(0.0, 0.0, found_at_head_angle);
         controller.set_state(new AvoidDefenderState(task));
     }
     else {
+        ROS_INFO_STREAM("No defender found");
         controller.set_state(new DetectHoopState(task));
     }
-
 }
