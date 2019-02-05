@@ -13,7 +13,7 @@ namespace cv {
 }
 
 
-enum SEARCH_MODE : int { SIMPLE, INTERMEDIATE, ADVANCED };
+enum SEARCH_MODE : int { SIMPLE, INTERMEDIATE, ADVANCED, MARKER_CLOSE };
 
 
 class Search {
@@ -29,6 +29,10 @@ public:
     bool intermediate_search(float& found_at_head_angle, std::function<bool()>& goal_function);
 
     bool advanced_search(float& found_at_head_angle, std::function<bool()>& goal_function);
+
+    bool marker_close_search(float& found_at_head_angle, std::function<bool()>& goal_function);
+
+    bool perform_head_search(BaseMotion &motion, std::function<bool()> &goal_function);
 
     bool check_goal(std::function<bool()>& goal_function, bool& has_found);
 

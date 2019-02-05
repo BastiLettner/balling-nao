@@ -15,11 +15,8 @@ ExecuteDunkMotionState::ExecuteDunkMotionState():
 
 void ExecuteDunkMotionState::go_next(Controller &controller) {
 
-    controller.motion_module().perform_standard_motion(MOTIONS::DUNK_MOTION_1);
-    controller.motion_module().perform_standard_motion(MOTIONS::DUNK_MOTION_2);
-    controller.motion_module().perform_standard_motion(MOTIONS::DUNK_MOTION_3);
-    controller.motion_module().perform_standard_motion(MOTIONS::DUNK_MOTION_4);
-    controller.motion_module().perform_standard_motion(MOTIONS::OPEN_RHAND);
+    controller.motion_module().perform_motion_sequence(MOTIONS::DUNK::DUNK_SEQ);
+
     controller.speech_module().talk("Slam duuuuuuuuuuuuuuunk");
     controller.set_state(new DoneState());
 

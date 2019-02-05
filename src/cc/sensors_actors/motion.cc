@@ -137,7 +137,7 @@ void Motion::perform_standard_motion(BaseMotion& motion, bool check) {
 
     request_joint_movement(motion.names, motion.angles, motion.speed, response);
 
-    if (true == check){ //default behavior
+    if (check){ //default behavior
         while(!check_movement_success(motion.angles, response.new_angles, motion.success_threshold)) {
             request_joint_movement(motion.names, motion.angles, motion.speed, response);
         }
@@ -161,6 +161,20 @@ void Motion::go_to_posture(std::string posture_name, float speed) {
 }
 
 void Motion::disable_stiffness(int iterations){
+
     std_srvs::Empty empty;
     for (int i =0; i <iterations; i++) _body_stiffness_disable.call(empty);
+
+}
+
+void Motion::perform_motion_sequence(MotionSequence& sequence) {
+
+    for(size_t motion_index = 0; motion_index < sequence.motions.size(); motion_index++) {
+
+        perform_standard_motion(
+                sequence.motions[motion_index],
+                sequence.make_check[motion_index]
+        );
+        ros::spinOnce();  // Not really relevant
+    }
 }

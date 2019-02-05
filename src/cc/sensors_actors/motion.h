@@ -12,6 +12,7 @@
 
 
 struct BaseMotion;
+struct MotionSequence;
 
 
 class Motion {
@@ -93,6 +94,8 @@ public:
     void stop_walking();
 
     void perform_standard_motion(BaseMotion& motion, bool check = true);
+
+    void perform_motion_sequence(MotionSequence& sequence);
 
     void go_to_posture(std::string posture_name, float speed);
 

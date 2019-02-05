@@ -160,8 +160,12 @@ void Speech::publish_vocab(std::vector<std::string> &vocab) {
     naoqi_bridge_msgs::SetSpeechVocabularyActionGoal msg_goal;
     msg_goal.goal_id.id = std::to_string(_vocab_id);
     msg_goal.goal.words = vocab;
-
-    _vocab_pub.publish(msg_goal);  // Publish the currently available command(s)
+    ros::Rate loop_rate(100);
+    for(size_t i = 0; i < 10; i++) {
+        _vocab_pub.publish(msg_goal);  // Publish the currently available command(s)
+        ros::spinOnce();
+        loop_rate.sleep();
+    }
 
 }
 

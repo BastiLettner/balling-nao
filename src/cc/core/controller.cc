@@ -16,10 +16,10 @@
 
 
 // Todo: remove command, this is to start in SearchDefenderState(command)
-std::string command = "dunk ";
+std::string command = "throw ";
 
 Controller::Controller(ros::NodeHandle& node_handle):
-    _current_state(new ExecuteDunkMotionState()),
+    _current_state(new ExecuteThrowMotionState()),
     _brain(node_handle)
 {
     // Nothing to do here

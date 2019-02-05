@@ -29,24 +29,47 @@ struct BaseMotion {
 
 };
 
+
+struct MotionSequence {
+
+    MotionSequence(std::vector<BaseMotion> m, std::vector<bool> c):
+        motions(m),
+        make_check(c) {}
+
+    std::vector<BaseMotion> motions;
+    std::vector<bool> make_check;
+
+};
+
 namespace MOTIONS {
 
-extern BaseMotion LOOK_AT_BALL;
-extern BaseMotion REQUEST_BALL_POSITION;
-extern BaseMotion HEAD_RESTING_POSITION;
-extern BaseMotion HEAD_FAR_LEFT;
-extern BaseMotion HEAD_FAR_RIGHT;
-extern BaseMotion HEAD_RIGHT;
-extern BaseMotion HEAD_LEFT;
-extern BaseMotion CLOSE_RHAND;
-extern BaseMotion OPEN_RHAND;
-extern BaseMotion EXTEND_RARM;
-extern BaseMotion PULLBACK_RARM;
-extern BaseMotion THROW1;
-extern BaseMotion DUNK_MOTION_1;
-extern BaseMotion DUNK_MOTION_2;
-extern BaseMotion DUNK_MOTION_3;
-extern BaseMotion DUNK_MOTION_4;
+    extern BaseMotion LOOK_AT_BALL;
+    extern BaseMotion REQUEST_BALL_POSITION;
+    extern BaseMotion HEAD_RESTING_POSITION;
+    extern BaseMotion CLOSE_RHAND;
+    extern BaseMotion OPEN_RHAND;
+    extern BaseMotion EXTEND_RARM;
+    extern BaseMotion PULLBACK_RARM;
+
+    namespace DUNK {
+
+        extern MotionSequence DUNK_SEQ;
+    }
+
+
+    namespace SEARCH {
+
+        extern MotionSequence MARKER_CLOSE_SEQ;
+        extern MotionSequence SIMPLE_SEARCH;
+
+    }
+
+    namespace THROW {
+
+        extern MotionSequence STRAIGHT_OVER_HEAD_SEQ;
+        extern MotionSequence STRAIGHT_OVER_HEAD_EXT_SEQ;
+
+    }
 
 
 }
