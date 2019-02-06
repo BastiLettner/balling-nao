@@ -67,7 +67,7 @@ void Vision::image_reception(const sensor_msgs::ImageConstPtr &msg) {
     int const max_elem = 2;
     int const max_kernel_size = 21;
 
-    namedWindow("Blob Extraction");
+    //namedWindow("Blob Extraction");
     namedWindow("TrackBars");
     createTrackbar( "Lower boundary of Hue", "TrackBars", &huelow, 255);
     createTrackbar( "Higher boundary of Hue", "TrackBars", &huehigh, 255);
@@ -126,15 +126,16 @@ void Vision::detect_marker() {
 
     // Empty vector
     Vision::_aruco_markers.clear();
-    Vision::_marker_detector.detect(Vision::_current_image, Vision::_aruco_markers);
+    Mat marker_image = Vision::_current_image.clone();
+    Vision::_marker_detector.detect(marker_image, Vision::_aruco_markers);
     if (not Vision::_aruco_markers.empty()) {
         for(size_t i = 0; i < _aruco_markers.size(); i++) {
             Vision::_aruco_markers[i].calculateExtrinsics(Vision::_marker_size, Vision::_cam_params, true);
-            Vision::_aruco_markers[i].draw(Vision::_current_image, cv::Scalar(0, 255, 255), 2);
+            Vision::_aruco_markers[i].draw(marker_image, cv::Scalar(0, 255, 255), 2);
         }
     }
 
-    cv::imshow("Marker Image", Vision::_current_image);
+    cv::imshow("Marker Image", marker_image);
 }
 
 bool Vision::marker_visible() {
@@ -181,4 +182,123 @@ bool Vision::defender_visible() {
 }
 
 
+
 //void Vision::marker_position(){}
+
+float Vision::detect_defender_span(){
+
+    if (defender_visible()) {
+
+        int image_width = Vision::_current_image.cols;
+        aruco::Marker defender;
+        for (size_t i = 0; i < _aruco_markers.size(); i++) {
+            if (_aruco_markers[i].id == defender_id) {
+                defender = _aruco_markers[i]; //stores the defender marker
+            }
+        }
+        float perimeter = defender.getPerimeter();
+        Point2f center = defender.getCenter();
+
+        Mat extracted_defender = extract_defender(); //get the extracted defender thanks to color segmentation
+        float span;
+
+        if (center.x < image_width / 2.0f) {
+            //marker on the left, search right of the marker
+            span = distance_marker_left_blob(extracted_defender, center.x);
+        }
+        else{
+            span = distance_marker_right_blob(extracted_defender, center.x);
+        }
+
+        span = span * Vision::_marker_size / (0.25f * perimeter); //gets the real distance between the marker and the most potruding part of the defender
+        return span;
+
+    }
+
+
+}
+
+Mat Vision::extract_defender(){
+
+    // TODO change parameters to be unique and not conflict with ball detection
+    Mat eroded_image;
+    Mat dilated_image;
+    Mat HSVImage;
+
+    cvtColor(Vision::_current_image, HSVImage, COLOR_BGR2HSV); //Conversion to HSV
+    inRange(HSVImage, cv::Scalar(huelow, 50, 255), cv::Scalar(huehigh, 255, 255), HSVImage); //Color extraction TODO change hue to correct values
+
+    Mat element_erosion = cv::getStructuringElement(
+            cv::MORPH_ELLIPSE,
+            cv::Size( 2*erosion_size + 1, 2*erosion_size+1 ),
+            cv::Point( erosion_size, erosion_size )
+    );
+    Mat element_dilation = cv::getStructuringElement(
+            cv::MORPH_ELLIPSE,
+            cv::Size( 2*dilation_size + 1, 2*dilation_size+1 ),
+            cv::Point( dilation_size, dilation_size )
+    );
+
+    //erode(HSVImage, eroded_image, element_erosion);
+    dilate(HSVImage, dilated_image, element_dilation);
+
+    return dilated_image;
+}
+
+float Vision::distance_marker_right_blob(Mat binary_defender, float center){
+
+    int screen_width = Vision::_current_image.cols;
+    int min_blob_size = 100;
+    Rect blob;
+    int edge = 0;
+    float span = 0.0f;
+
+    std::vector<std::vector<Point> > contours; //vector of contours
+    std::vector<Vec4i> hierarchy;
+    findContours(binary_defender, contours, hierarchy, 2/*cv::CV_RETR_CCOMP*/, 2/*cv::CV_CHAIN_APPROX_SIMPLE*/);
+
+    for( int i = 0; i < contours.size(); i++ ) // iterate through each contour.
+    {
+        double a = cv::contourArea( contours[i], false);  //  Find the area of contour
+        if(a > min_blob_size) {
+            blob = boundingRect(contours[i]);
+            if (blob.x > edge and blob.x < center) {
+                edge = blob.x;
+                span = (float)edge - center;
+            }
+        }
+    }
+
+    return span;
+
+}
+
+float Vision::distance_marker_left_blob(Mat binary_defender, float center){
+
+    int screen_width = Vision::_current_image.cols;
+    int min_blob_size = 200;
+    Rect blob;
+    int edge = screen_width;
+    float span = 0.0f;
+
+    std::vector<std::vector<Point> > contours; //vector of contours
+    std::vector<Vec4i> hierarchy;
+    findContours(binary_defender, contours, hierarchy, 2/*cv::CV_RETR_CCOMP*/, 2/*cv::CV_CHAIN_APPROX_SIMPLE*/);
+
+    for( int i = 0; i < contours.size(); i++ ) // iterate through each contour.
+    {
+        double a = cv::contourArea( contours[i], false);  //  Find the area of contour
+        if(a > min_blob_size) {
+            blob = boundingRect(contours[i]);
+            ROS_INFO_STREAM("Defender contour");
+            if (blob.x < edge and blob.x > center) {
+                edge = blob.x;
+                span = (float)edge - center;
+                rectangle(binary_defender, blob, Scalar(255, 255, 255));
+            }
+        }
+    }
+    imshow("Defender Blob", binary_defender);
+    return span;
+
+}

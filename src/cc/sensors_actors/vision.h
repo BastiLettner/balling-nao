@@ -62,6 +62,14 @@ public:
 
     void tf_publisher(std::vector<float>& point, std::string parent_frame, std::string name);
 
+    float detect_defender_span();
+
+    cv:: Mat extract_defender();
+
+    float distance_marker_right_blob(cv::Mat binary_defender, float center);
+
+    float distance_marker_left_blob(cv::Mat binary_defender, float center);
+
 private:
 
     bool _ball_visible = false;
