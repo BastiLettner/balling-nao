@@ -66,8 +66,17 @@ namespace MOTIONS {
 
     namespace THROW {
 
-        extern MotionSequence STRAIGHT_OVER_HEAD_SEQ;
+        // Marker distance ~55cm
+        // No shift
         extern MotionSequence STRAIGHT_OVER_HEAD_EXT_SEQ;
+
+        // Marker distance ~55cm
+        // Left Shift: ~25 cm
+        extern MotionSequence LEFT_OVER_HEAD_EXT_SEQ;
+
+        // marker distance ~55cm
+        // Right Shift: ~21 cm
+        extern MotionSequence RIGHT_OVER_HEAD_EXT_SEQ;
 
     }
 

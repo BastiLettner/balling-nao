@@ -47,7 +47,8 @@ int defender_id = 0;
 
 Vision::Vision(ros::NodeHandle &node_handle): _it(node_handle) {
     Vision::_image_sub = _it.subscribe("/nao_robot/camera/top/camera/image_raw", 1, &Vision::image_reception, this);
-    _cam_params.setParams(NaoCameraParameters::cameraP, NaoCameraParameters::dist, Size(1280, 960));
+    _cam_params.setParams(NaoCameraParameters::cameraP, NaoCameraParameters::dist, Size(640, 480));
+
 }
 
 void Vision::image_reception(const sensor_msgs::ImageConstPtr &msg) {
@@ -68,6 +69,8 @@ void Vision::image_reception(const sensor_msgs::ImageConstPtr &msg) {
     int const max_kernel_size = 21;
 
     //namedWindow("Blob Extraction");
+    namedWindow("Defender Blob");
+    namedWindow("Defender detection");
     namedWindow("TrackBars");
     createTrackbar( "Lower boundary of Hue", "TrackBars", &huelow, 255);
     createTrackbar( "Higher boundary of Hue", "TrackBars", &huehigh, 255);
@@ -82,6 +85,7 @@ void Vision::image_reception(const sensor_msgs::ImageConstPtr &msg) {
 *It outputs true if the ball is visible, false otherwise
 */
 bool Vision::ball_visible(){
+
     bool ball_detected = false;
     Mat eroded_image;
     Mat dilated_image;
@@ -183,7 +187,7 @@ bool Vision::defender_visible() {
 
 
 
-//void Vision::marker_position(){}
+
 
 float Vision::detect_defender_span(){
 
@@ -207,6 +211,7 @@ float Vision::detect_defender_span(){
             span = distance_marker_left_blob(extracted_defender, center.x);
         }
         else{
+            //marker on the right, search left of the marker
             span = distance_marker_right_blob(extracted_defender, center.x);
         }
 
@@ -248,7 +253,7 @@ Mat Vision::extract_defender(){
 float Vision::distance_marker_right_blob(Mat binary_defender, float center){
 
     int screen_width = Vision::_current_image.cols;
-    int min_blob_size = 100;
+    int min_blob_size = 20;
     Rect blob;
     int edge = 0;
     float span = 0.0f;
@@ -275,8 +280,9 @@ float Vision::distance_marker_right_blob(Mat binary_defender, float center){
 
 float Vision::distance_marker_left_blob(Mat binary_defender, float center){
 
+    Mat image_orig = Vision::_current_image.clone();
     int screen_width = Vision::_current_image.cols;
-    int min_blob_size = 200;
+    int min_blob_size = 200; // minimum size of a blob that NAO would consider part of the defender
     Rect blob;
     int edge = screen_width;
     float span = 0.0f;
@@ -291,14 +297,16 @@ float Vision::distance_marker_left_blob(Mat binary_defender, float center){
         if(a > min_blob_size) {
             blob = boundingRect(contours[i]);
             ROS_INFO_STREAM("Defender contour");
-            if (blob.x < edge and blob.x > center) {
-                edge = blob.x;
+            if (blob.x + blob.width < edge and blob.x > center) {
+                edge = blob.x + blob.width;
                 span = (float)edge - center;
                 rectangle(binary_defender, blob, Scalar(255, 255, 255));
+                rectangle(image_orig, blob, Scalar(255, 0, 0));
             }
         }
     }
     imshow("Defender Blob", binary_defender);
+    imshow("Defender detection", image_orig);
     return span;
 
 }
