@@ -14,4 +14,6 @@
 
   <node pkg="balling_nao" type="position_service.py" name="position_service" required="true" args="$(arg nao_ip) $(arg nao_port)" output="screen"/>
 
+  <node pkg="balling_nao" type="rotation_service.py" name="rotation_service" required="true" args="$(arg nao_ip) $(arg nao_port)" output="screen"/>
+
 </launch>

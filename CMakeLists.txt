@@ -25,6 +25,7 @@ add_service_files(
   HandControl.srv
   GoToPosture.srv
   MoveToPosition.srv
+  GetMarkerRotation.srv
 )
 
 generate_messages(DEPENDENCIES std_msgs)
@@ -83,6 +84,7 @@ catkin_install_python(PROGRAMS
         ./scripts/joint_service.py
         ./scripts/position_service.py
         ./scripts/hand_service.py
+        ./scripts/rotation_service.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 

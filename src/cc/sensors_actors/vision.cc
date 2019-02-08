@@ -9,6 +9,7 @@
 #include <sensor_msgs/image_encodings.h>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/highgui/highgui.hpp>
+#include "balling_nao/GetMarkerRotation.h"
 
 using namespace cv;
 
@@ -46,6 +47,7 @@ int hoop_id = 1; //use chev.me/arucogen to generate aruco markers
 int defender_id = 0;
 
 Vision::Vision(ros::NodeHandle &node_handle): _it(node_handle) {
+    _client_get_rotation = node_handle.serviceClient<balling_nao::GetMarkerRotation>("rotation_server");
     Vision::_image_sub = _it.subscribe("/nao_robot/camera/top/camera/image_raw", 1, &Vision::image_reception, this);
     _cam_params.setParams(NaoCameraParameters::cameraP, NaoCameraParameters::dist, Size(640, 480));
 
@@ -231,7 +233,7 @@ Mat Vision::extract_defender(){
     Mat HSVImage;
 
     cvtColor(Vision::_current_image, HSVImage, COLOR_BGR2HSV); //Conversion to HSV
-    inRange(HSVImage, cv::Scalar(huelow, 50, 255), cv::Scalar(huehigh, 255, 255), HSVImage); //Color extraction TODO change hue to correct values
+    inRange(HSVImage, cv::Scalar(huelow, 10, 180), cv::Scalar(huehigh, 200, 240), HSVImage); //Color extraction TODO change hue to correct values
 
     Mat element_erosion = cv::getStructuringElement(
             cv::MORPH_ELLIPSE,
@@ -252,10 +254,11 @@ Mat Vision::extract_defender(){
 
 float Vision::distance_marker_right_blob(Mat binary_defender, float center){
 
+    Mat image_orig = Vision::_current_image.clone();
     int screen_width = Vision::_current_image.cols;
     int min_blob_size = 20;
     Rect blob;
-    int edge = 0;
+    int edge = center;
     float span = 0.0f;
 
     std::vector<std::vector<Point> > contours; //vector of contours
@@ -267,13 +270,16 @@ float Vision::distance_marker_right_blob(Mat binary_defender, float center){
         double a = cv::contourArea( contours[i], false);  //  Find the area of contour
         if(a > min_blob_size) {
             blob = boundingRect(contours[i]);
-            if (blob.x > edge and blob.x < center) {
+            if (blob.x < edge) {
                 edge = blob.x;
                 span = (float)edge - center;
+                rectangle(binary_defender, blob, Scalar(255, 255, 255));
+                rectangle(image_orig, blob, Scalar(255, 0, 0));
             }
         }
     }
-
+    imshow("Defender Blob", binary_defender);
+    imshow("Defender detection", image_orig);
     return span;
 
 }
@@ -282,9 +288,9 @@ float Vision::distance_marker_left_blob(Mat binary_defender, float center){
 
     Mat image_orig = Vision::_current_image.clone();
     int screen_width = Vision::_current_image.cols;
-    int min_blob_size = 200; // minimum size of a blob that NAO would consider part of the defender
+    int min_blob_size = 20; // minimum size of a blob that NAO would consider part of the defender
     Rect blob;
-    int edge = screen_width;
+    int edge = center;
     float span = 0.0f;
 
     std::vector<std::vector<Point> > contours; //vector of contours
@@ -296,8 +302,7 @@ float Vision::distance_marker_left_blob(Mat binary_defender, float center){
         double a = cv::contourArea( contours[i], false);  //  Find the area of contour
         if(a > min_blob_size) {
             blob = boundingRect(contours[i]);
-            ROS_INFO_STREAM("Defender contour");
-            if (blob.x + blob.width < edge and blob.x > center) {
+            if (blob.x + blob.width > edge) {
                 edge = blob.x + blob.width;
                 span = (float)edge - center;
                 rectangle(binary_defender, blob, Scalar(255, 255, 255));
@@ -308,5 +313,37 @@ float Vision::distance_marker_left_blob(Mat binary_defender, float center){
     imshow("Defender Blob", binary_defender);
     imshow("Defender detection", image_orig);
     return span;
+
+}
+
+float Vision::get_defender_rotation(){
+    if (defender_visible()) {
+        Mat rvec_matrix;
+        for (size_t i = 0; i < _aruco_markers.size(); i++) {
+            if (_aruco_markers[i].id == defender_id) {
+                rvec_matrix = _aruco_markers[i].Rvec;
+            }
+        }
+        std::vector<float> rvec{
+                rvec_matrix.at<float>(0),
+                rvec_matrix.at<float>(1),
+                rvec_matrix.at<float>(2)
+        };
+        return get_marker_yaw(rvec);
+    }
+
+}
+
+float Vision::get_marker_yaw(std::vector<float> &rvec) {
+
+    balling_nao::GetMarkerRotation srv;
+    srv.request.Rvec = rvec;
+    if (_client_get_rotation.call(srv)) {
+        return srv.response.yaw;
+    }
+    else {
+        throw std::runtime_error("Could not get rotation information");
+    }
+
 
 }

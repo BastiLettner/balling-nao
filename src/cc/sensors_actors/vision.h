@@ -70,6 +70,10 @@ public:
 
     float distance_marker_left_blob(cv::Mat binary_defender, float center);
 
+    float get_marker_yaw(std::vector<float>& rvec);
+
+    float get_defender_rotation();
+
 private:
 
     bool _ball_visible = false;
@@ -91,6 +95,8 @@ private:
     cv::Mat _marker_mat_t_defender;
     cv::Mat _marker_mat_t_hoop;
     tf::TransformBroadcaster _broadcast;
+
+    ros::ServiceClient _client_get_rotation;
 
 };
 #endif //BALLING_NAO_VISION_H

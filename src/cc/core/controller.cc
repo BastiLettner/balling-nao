@@ -20,7 +20,7 @@
 std::string command = "dunk ";
 
 Controller::Controller(ros::NodeHandle& node_handle):
-    _current_state(new ExecuteThrowMotionState()),
+    _current_state(new SearchDefenderState(command)),
     _brain(node_handle)
 {
     // Nothing to do here
