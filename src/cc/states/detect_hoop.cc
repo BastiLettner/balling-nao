@@ -19,9 +19,9 @@ void DetectHoopState::go_next(Controller &controller) {
 
     // 1. if hoop visible: move to hoop position
     //    if hoop not visible: start over
-    if(state_routine(SEARCH_MODE::SIMPLE, controller)) return;
-    else if(state_routine(SEARCH_MODE::INTERMEDIATE, controller)) return;
-    else if(state_routine(SEARCH_MODE::ADVANCED, controller)) return;
+    if(state_routine(SEARCH_MODE::VERY_SIMPLE_SEARCH, controller)) return;
+    else if(state_routine(SEARCH_MODE::MARKER_CLOSE, controller)) return;
+    else if(state_routine(SEARCH_MODE::SIMPLE, controller)) return;
     else {
         controller.speech_module().talk("Could not find hoop after all searching efforts");
         ROS_INFO_STREAM("Could not find the hoop after advanced search. Remaining in DetectHoopState.");

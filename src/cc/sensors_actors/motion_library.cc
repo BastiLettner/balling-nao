@@ -51,37 +51,37 @@ namespace MOTIONS {
             {
                 BaseMotion(
                         {"HeadYaw", "HeadPitch"},
-                        {0.0f * PI_180, 20.0f * PI_180},
+                        {0.0f * PI_180, 30.0f * PI_180},
                         0.2,
                         15.0
                 ),
                 BaseMotion(
                         {"HeadYaw", "HeadPitch"},
-                        {45.0f * PI_180, 20.0f * PI_180},
+                        {45.0f * PI_180, 30.0f * PI_180},
                         0.2,
                         15.0
                 ),
                 BaseMotion(
                         {"HeadYaw", "HeadPitch"},
-                        {25.0f * PI_180, 20.0f * PI_180},
+                        {25.0f * PI_180, 30.0f * PI_180},
                         0.2,
                         15.0
                 ),
                 BaseMotion(
                         {"HeadYaw", "HeadPitch"},
-                        {0.0f * PI_180, 20.0f * PI_180},
+                        {0.0f * PI_180, 30.0f * PI_180},
                         0.2,
                         15.0
                 ),
                 BaseMotion(
                         {"HeadYaw", "HeadPitch"},
-                        {-25.0f * PI_180, 20.0f * PI_180},
+                        {-25.0f * PI_180, 30.0f * PI_180},
                         0.2,
                         15.0
                 ),
                 BaseMotion(
                         {"HeadYaw", "HeadPitch"},
-                        {-45.0f * PI_180, 20.0f * PI_180},
+                        {-45.0f * PI_180, 30.0f * PI_180},
                         0.2,
                         15.0
                 )
@@ -142,6 +142,42 @@ namespace MOTIONS {
                     true,
                     true,
                     true
+                }
+        );
+
+        MotionSequence VERY_SIMPLE_SEARCH = MotionSequence(
+                {
+                        BaseMotion(
+                                {"HeadYaw", "HeadPitch"},
+                                {0.0f, 0.0f},
+                                0.2,
+                                15.0
+                        ),
+                        BaseMotion(
+                                {"HeadYaw", "HeadPitch"},
+                                {45.0f*PI_180, 0.0f*PI_180},
+                                0.2,
+                                15.0
+                        ),
+                        BaseMotion(
+                                {"HeadYaw", "HeadPitch"},
+                                {0.0f, 0.0f},
+                                0.2,
+                                15.0
+                        ),
+                        BaseMotion(
+                                {"HeadYaw", "HeadPitch"},
+                                {-45.0f*PI_180, 0.0f*PI_180},
+                                0.2,
+                                15.0
+                        ),
+
+                },
+                {
+                        true,
+                        true,
+                        true,
+                        true,
                 }
         );
 

@@ -209,6 +209,7 @@ float Vision::detect_defender_span(){
         float span;
 
         if (center.x < image_width / 2.0f) {
+            ROS_INFO_STREAM("Center X: " + std::to_string(center.x));
             //marker on the left, search right of the marker
             span = distance_marker_left_blob(extracted_defender, center.x);
         }

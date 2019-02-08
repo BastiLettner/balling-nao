@@ -29,6 +29,9 @@ bool Search::search_routine(SEARCH_MODE &mode, std::function<bool()>& goal_funct
     if(mode == SEARCH_MODE::MARKER_CLOSE) {
         return marker_close_search(found_at_head_angle, goal_function);
     }
+    if(mode == SEARCH_MODE::VERY_SIMPLE_SEARCH) {
+        return very_simple_search(found_at_head_angle, goal_function);
+    }
 }
 
 bool Search::simple_search(float& found_at_head_angle, std::function<bool()>& goal_function) {
@@ -38,18 +41,37 @@ bool Search::simple_search(float& found_at_head_angle, std::function<bool()>& go
     for(auto& motion : MOTIONS::SEARCH::SIMPLE_SEARCH.motions) {
         if(perform_head_search(motion, goal_function)) {
             found_at_head_angle = motion.angles[0];
-            ROS_INFO_STREAM("Found hoop after close search");
             return true;
         }
     }
+    _motion.perform_standard_motion(MOTIONS::HEAD_RESTING_POSITION);
 
     return has_found;
 
 }
 
+
+bool Search::very_simple_search(float& found_at_head_angle, std::function<bool()>& goal_function) {
+
+    bool has_found = false;
+
+    for(auto& motion : MOTIONS::SEARCH::VERY_SIMPLE_SEARCH.motions) {
+        if(perform_head_search(motion, goal_function)) {
+            found_at_head_angle = motion.angles[0];
+            return true;
+        }
+    }
+    _motion.perform_standard_motion(MOTIONS::HEAD_RESTING_POSITION);
+
+    return has_found;
+
+}
+
+
 bool Search::intermediate_search(float& found_at_angle, std::function<bool()>& goal_function) {
     return false;
 }
+
 
 bool Search::advanced_search(float& found_at_angle, std::function<bool()>& goal_function) {
     return false;
@@ -82,6 +104,7 @@ bool Search::marker_close_search(float &found_at_head_angle, std::function<bool(
             return true;
         }
     }
+    _motion.perform_standard_motion(MOTIONS::HEAD_RESTING_POSITION);
 
     return has_found;
 

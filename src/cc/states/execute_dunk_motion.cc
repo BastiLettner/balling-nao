@@ -17,7 +17,7 @@ void ExecuteDunkMotionState::go_next(Controller &controller) {
 
     controller.motion_module().perform_motion_sequence(MOTIONS::DUNK::DUNK_SEQ);
 
-    controller.speech_module().talk("Slam duuuuuuuuuuuuuuunk");
+    controller.speech_module().talk("Slam dunk");
     controller.set_state(new DoneState());
 
 }

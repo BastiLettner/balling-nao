@@ -36,7 +36,7 @@ void Speech::talk(std::string sentence) {
     msg_goal.goal.say = sentence;
     _vocab_id ++; // Increase id counter to guarantee uniqueness
     // Todo: commented out for debugging, uncomment!
-    //_speech_pub.publish(msg_goal);
+    _speech_pub.publish(msg_goal);
 
     // Wait 500 milli seconds to make sure the action status publishing
     // is received and we can check the speech status

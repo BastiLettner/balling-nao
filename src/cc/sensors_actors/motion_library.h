@@ -61,6 +61,7 @@ namespace MOTIONS {
 
         extern MotionSequence MARKER_CLOSE_SEQ;
         extern MotionSequence SIMPLE_SEARCH;
+        extern MotionSequence VERY_SIMPLE_SEARCH;
 
     }
 

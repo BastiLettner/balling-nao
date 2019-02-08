@@ -21,6 +21,22 @@ void AvoidDefenderState::go_next(Controller &controller) {
     ros::Rate loop_rate(10);
     size_t attempts = 0;
     loop_rate.sleep();
+    ros::spinOnce();
+    if (not controller.vision_module().defender_visible()) {
+        SEARCH_MODE mode = SEARCH_MODE::VERY_SIMPLE_SEARCH;
+        float found_at_head_angle;
+        std::function<bool ()> f = [&]() { return controller.vision_module().defender_visible(); };
+        bool defender_visible = controller.brain().search().search_routine(
+                mode,
+                f,
+                found_at_head_angle
+        );
+        if (defender_visible) {
+            controller.motion_module().request_move_to_position(0.0, 0.0, found_at_head_angle);
+
+        }
+    }
+
     float span = 0.0f;
     float yaw = controller.vision_module().get_defender_rotation();
     int orientation = (yaw > 0) - (yaw < 0); //1 if yaw is postive, -1 else
@@ -67,16 +83,21 @@ void AvoidDefenderState::go_next(Controller &controller) {
     // 3. Walk around defender using by succession of 90 degree angles
     ROS_INFO_STREAM("Walking around defender ");
 
-    int direction = (span > 0) - (span < 0); //1 if span is postive, -1 else
+    int direction = (span >= 0) - (span < 0); //1 if span is postive, -1 else
+    ROS_INFO_STREAM("Direction:" + std::to_string(direction));
+    ROS_INFO_STREAM("Span is: " + std::to_string(span));
 
-    ROS_INFO_STREAM("SIDE STEP");
-    controller.motion_module().request_move_to_position(0.0, 0.0, -6.0f * yaw);
-    controller.motion_module().request_move_to_position(0.0, - (span + 0.5f), 0.0); //side steps
+    controller.motion_module().request_move_to_position(0.0, 0.0, 0.8f*6.0f * yaw);
+    ROS_INFO_STREAM("Turning: " + std::to_string(0.8f*6.0f * yaw));
+
+    controller.motion_module().request_move_to_position(0.0, -0.8f*direction*(abs(span) + 0.25f), 0.0); //side steps
+    ROS_INFO_STREAM("Side steps: " + std::to_string(-0.8f*direction*(abs(span) + 0.25f)));
+
     ROS_INFO_STREAM("WALK PAST");
     //controller.motion_module().request_move_to_position(0.0, 0.0, -direction * 3.1415f * 0.15f); //45 degree angle
-    controller.motion_module().request_move_to_position(span * direction + 0.5f, 0.0, 0.0); //the multiplication by direction ensures span is always positive
+    controller.motion_module().request_move_to_position(0.8f * span * direction + 0.2f, 0.0, 0.0); //the multiplication by direction ensures span is always positive
 
-    ROS_INFO_STREAM("TURN TOP THE HOOP");
+    ROS_INFO_STREAM("TURN TO THE HOOP");
     controller.motion_module().request_move_to_position(0.0, 0.0, direction * 3.1415f * 0.25f);
     //controller.motion_module().request_move_to_position(0.60f, 0.0, 0.0);
 
