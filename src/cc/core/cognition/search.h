@@ -38,6 +38,8 @@ public:
 
     bool very_simple_search(float& found_at_head_angle, std::function<bool()>& goal_function);
 
+    Motion& get_motion() { return _motion; }
+
 private:
 
     Motion& _motion;

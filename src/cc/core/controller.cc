@@ -20,7 +20,7 @@
 std::string command = "throw ";
 
 Controller::Controller(ros::NodeHandle& node_handle):
-    _current_state(new SearchDefenderState(command)),
+    _current_state(new RequestBallState()),
     _brain(node_handle)
 {
     // Nothing to do here

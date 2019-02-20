@@ -10,7 +10,8 @@ Brain::Brain(ros::NodeHandle &node_handle):
     _vision(node_handle),
     _tactile(node_handle),
     _speech(node_handle),
-    _search(_motion)
+    _search(_motion),
+    _path_planning(_search, _vision)
 {
 
 }

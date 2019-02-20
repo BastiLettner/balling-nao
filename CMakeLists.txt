@@ -77,6 +77,7 @@ add_library(CONTROLLER
         src/cc/core/brain.h
         src/cc/core/brain.cc
         src/cc/core/cognition/search.cc
+        src/cc/core/cognition/path_planning.cc
         src/cc/sensors_actors/motion_library.cc)
 link_libraries(CONTROLLER ${catkin_LIBRARIES} ${MOTION} ${VISION} ${SPEECH})
 
@@ -88,7 +89,7 @@ catkin_install_python(PROGRAMS
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
-add_executable(BALLER src/main.cc src/cc/core/cognition/search.h src/cc/core/cognition/search.cc)
+add_executable(BALLER src/main.cc)
 include_directories(${Boost_INCLUDE_DIRS})
 target_link_libraries(BALLER ${catkin_LIBRARIES} ${Boost_LIBRARIES} ${CONTROLLER})
 

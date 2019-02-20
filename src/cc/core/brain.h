@@ -10,6 +10,7 @@
 #include "../sensors_actors/vision.h"
 #include "../sensors_actors/tactile.h"
 #include "cognition/search.h"
+#include "cognition/path_planning.h"
 
 
 class Brain {
@@ -25,6 +26,7 @@ public:
     Motion& motion_module() { return _motion; }
     Tactile& tactile_module() { return _tactile; }
     Search& search() { return _search; }
+    PathPlanning path_planning() { return _path_planning; }
 
 
 private:
@@ -35,6 +37,7 @@ private:
     Tactile _tactile;
 
     Search _search;
+    PathPlanning _path_planning;
     
 };
 

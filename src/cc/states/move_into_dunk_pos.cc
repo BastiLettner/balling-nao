@@ -55,8 +55,6 @@ void MoveIntoDunkPositionState::go_next(Controller &controller) {
         controller.motion_module().request_move_to_position(walking_x/2, 0.0, 0.0); // Walk the remaining dist
     }
 
-
-
     mode = SEARCH_MODE::MARKER_CLOSE;
     f = [&]() { return controller.vision_module().hoop_visible(); };
     hoop_visible = controller.brain().search().search_routine(
