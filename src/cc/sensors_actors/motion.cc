@@ -18,38 +18,20 @@
 #include "balling_nao/MoveToPosition.h"
 #include "motion_library.h"
 
+
 Motion::Motion(ros::NodeHandle &node_handle)
 {
-    _client_get_position = node_handle.serviceClient<balling_nao::GetPosition>("get_position_server");
-    _client_set_position = node_handle.serviceClient<balling_nao::Movement>("set_position_server");
-    _client_get_transform = node_handle.serviceClient<balling_nao::GetTransform>("get_transformation");
+
     _client_set_joints = node_handle.serviceClient<balling_nao::MoveJoints>("set_joints_server");
-    _client_set_hands = node_handle.serviceClient<balling_nao::HandControl>("set_hands_server");
     _client_set_posture = node_handle.serviceClient<balling_nao::GoToPosture>("go_to_posture_server");
     _client_move_to = node_handle.serviceClient<balling_nao::MoveToPosition>("move_to_position_server");
     _body_stiffness_enable = node_handle.serviceClient<std_srvs::Empty>("/body_stiffness/enable");
     _body_stiffness_disable = node_handle.serviceClient<std_srvs::Empty>("/body_stiffness/disable");
     _walk_pub = node_handle.advertise<geometry_msgs::Pose2D>("/cmd_pose", 1);
     _footContact_sub = node_handle.subscribe<std_msgs::Bool>("/foot_contact", 1, &Motion::footContactCallback, this);
+
 }
 
-
-std::vector<float> Motion::request_cartesian_movement(std::string &name, std::vector<float> &position, float time) {
-
-    // Request movement using Interpolation and return the new position.
-    balling_nao::Movement srv; //initialise a srv file
-    srv.request.name = name;
-    srv.request.coordinates = position;
-    srv.request.time = time;
-    srv.request.type = 1;
-    if (_client_set_position.call(srv)) {
-        std::vector<float> coordinates_6D(srv.response.coordinates.begin(), srv.response.coordinates.end()); //obtain the current position of the robot
-        return coordinates_6D;
-    }
-    else {
-        throw std::runtime_error("Could not send movement request");
-    }
-}
 
 void Motion::request_joint_movement(
         std::vector<std::string>& names,
@@ -79,22 +61,9 @@ void Motion::footContactCallback(const std_msgs::BoolConstPtr& contact)
     }
 }
 
-//void Motion::walk_to_position(double x, double y, double theta)
-//{
-//    std_srvs::Empty empty;
-//    _body_stiffness_enable.call(empty);
-//    ROS_INFO("Requesting to walk");
-//    geometry_msgs::Pose2D msg;
-//    msg.x = x;
-//    msg.y = y;
-//    msg.theta = theta;
-//    _walk_pub.publish(msg);
-//}
 
 bool Motion::request_move_to_position(float x, float y, float theta){ //state = 0 to open the hand, 1 to close
     balling_nao::MoveToPosition srv;
-    //balling_nao::MoveToPositionResponse response;
-    // moveTo function works anti-clockwise, therefore -theta !!!
 
     srv.request.x = x;
     srv.request.y = y;
@@ -119,9 +88,8 @@ void Motion::stop_walking()
 
 }
 
+
 bool Motion::check_movement_success(std::vector<float> &angles_request, std::vector<float> &angle_response, float thresh) {
-
-
 
     for(size_t i = 0; i < angles_request.size(); i++) {
         float dif = (angles_request[i] - angle_response[i]) / PI_180;
@@ -145,6 +113,7 @@ void Motion::perform_standard_motion(BaseMotion& motion, bool check) {
 
 }
 
+
 void Motion::go_to_posture(std::string posture_name, float speed) {
     std_srvs::Empty empty;
     _body_stiffness_enable.call(empty); // setting stiffness before going into posture
@@ -160,12 +129,14 @@ void Motion::go_to_posture(std::string posture_name, float speed) {
     }
 }
 
+
 void Motion::disable_stiffness(int iterations){
 
     std_srvs::Empty empty;
     for (int i =0; i <iterations; i++) _body_stiffness_disable.call(empty);
 
 }
+
 
 void Motion::perform_motion_sequence(MotionSequence& sequence) {
 

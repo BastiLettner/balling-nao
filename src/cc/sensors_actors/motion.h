@@ -17,14 +17,16 @@ struct MotionSequence;
 
 class Motion {
 
+    // The motion module.
+    // Uses different services to interface with the NAO Api
+    // Every time the robot moves, this module is responsible
+
 public:
 
     // Constructs object
-    // - "get_position_server" (service)
-    // - "set_position_server" (service)
-    // - "get_transformation" (service)
     // - "set_joints_server" (service)
-    // - "set_hands_server" (service)
+    // - "go_to_posture_server" (service)
+    // - "move_to_position_server" (service)
     // - "/body_stiffness/enable" (service)
     // - "/body_stiffness/disable" (service)
     // - "/cmd_pose" (publish)
@@ -33,22 +35,6 @@ public:
     ~Motion() = default;
 
     Motion(Motion&& motion) = delete;
-
-    // Put the robot into request ball position
-    // Blocks until the movement is done
-    // It will check the success of the movement
-    // and will retry until the position is sufficient (check_movement_success)
-    //
-    void request_ball_position();
-
-    // Do a finger movement with the right hand. Thin wrapper for the request_hand_action function.
-    //
-    // Args:
-    //     type: 0: open, 1: close
-    //
-    void finger_movement(int type);
-
-    std::vector<float> request_cartesian_movement(std::string& name, std::vector<float> &position, float time);
 
     // Send a request to the MoveJoints Python service.
     //
@@ -66,12 +52,14 @@ public:
             balling_nao::MoveJointsResponse& response
             );
 
-    // Compares the angle request to the angle response. If there is a difference of 15 degree or more
+    // Compares the angle request to the angle response. If there is a difference of thresh degree or more
     // for one angle the function returns False indicating failure, else it returns True indicating success
     //
     // Args:
     //     angle_request: A list of requested angles (in RAD).
     //     angle_response: A list of angles from the response (in RAD)
+    //     thresh: The threshold for a movement to be considered successful. I.e. if the returned angles
+    //             (the new ones) are within thresh of the request for every joint its a success.
     //
     // Return:
     //     True: Movement successful
@@ -79,45 +67,54 @@ public:
     //
     bool check_movement_success(std::vector<float>& angles_request, std::vector<float>& angle_response, float thresh);
 
-    // Request a hand action. (Open or close)
-    //
-    // Args:
-    //    handName: LHand or RHand
-    //    state: 0: open 1: close
-    //
-    // Returns:
-    //      success
-    bool request_hand_action(std::string handName, int state);
-
+    // Callback for the foot contact topic.
     void footContactCallback(const std_msgs::BoolConstPtr& contact);
 
+    // Call to the stop walking service
     void stop_walking();
 
+    // Execute a standard motion. This puts the robot into a certain joint position.
+    //
+    // Args:
+    //     motion: The motion defining the angles, names and the speed
+    //     check: Whether to make the check if the movement was successful (within 15 degree fo the request)
+    //
     void perform_standard_motion(BaseMotion& motion, bool check = true);
 
+    // Perform a hole sequence of standard motions
+    //
+    // Args:
+    //     sequence: A vector of motions
+    //
     void perform_motion_sequence(MotionSequence& sequence);
 
+    // Calls the posture service to put nao into one of the standard postures.
     void go_to_posture(std::string posture_name, float speed);
 
+    // Disable the robots body stiffness
+    //
+    // Args:
+    //     iteration: How often the call will be made
+    //
     void disable_stiffness(int iterations);
 
+    // Lets Nao walk to a position
+    //
+    // Args:
+    //     x: The x-coord
+    //     y: The y-coord
+    //     theta: The angle
+    //
     bool request_move_to_position(float x, float y, float theta);
 
 private:
 
-    ros::ServiceClient _client_get_position;
-    ros::ServiceClient _client_set_position;
-    ros::ServiceClient _client_get_transform;
+    // All the services and subscriptions
     ros::ServiceClient _client_set_joints;
-    ros::ServiceClient _client_set_hands;
     ros::ServiceClient _client_set_posture;
     ros::ServiceClient _client_move_to;
-
-
-    // Publisher to nao walking
     ros::Publisher _walk_pub;
     ros::ServiceClient _stop_walk_srv;
-    // Subscriber for foot contact
     ros::Subscriber _footContact_sub;
     ros::ServiceClient _body_stiffness_enable;
     ros::ServiceClient _body_stiffness_disable;

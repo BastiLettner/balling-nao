@@ -8,16 +8,33 @@ from balling_nao.srv import GetMarkerRotation, \
     GetMarkerRotationResponse
 
 
-
 class NaoController(object):
 
+    """
+    Service to get the rotation of an aruco marker
+    """
+
     def __init__(self, ip, port):
+        """
+
+        Args:
+            ip: NAO_IP
+            port: NAO_PORT
+        """
 
         self.nao_proxy = ALProxy("ALMotion", ip, port)
-        rospy.init_node('move_joints_server') #better name is needed
+        rospy.init_node('rotation_server_node')
         rospy.Service("rotation_server", GetMarkerRotation, self.get_yaw)
 
     def get_yaw(self, req):
+        """
+
+        Args:
+            req: The request containing the Rvec.
+
+        Returns:
+            response containing the yaw
+        """
 
         Rvec = numpy.array(req.Rvec)
         rotation_matrix, rotation_aruco_jacob = cv2.Rodrigues(Rvec)

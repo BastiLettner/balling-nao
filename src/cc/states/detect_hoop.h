@@ -16,14 +16,25 @@ class DetectHoopState: public State {
 
 public:
 
+    // Constructs object
+    //
+    // Args:
+    //     task: The task (dunk or throw) from the RequestTaskState.
+    //
     explicit DetectHoopState(std::string& task);
 
+    // Implements the logic of this state
+    // The main steps are:
+    //     1. Detect the hoop using all the search routines if necessary
+    //
     void go_next(Controller& controller) override;
 
     const std::string get_state_name() override { return _state_name; }
 
     std::string task;  // The task (dunk or throw) from the RequestTaskState. Need to be carried by this state.
 
+    // Implements searching for a given mode
+    // This is an extra function since we use all three searches in this state and can reuse this function
     bool state_routine(SEARCH_MODE mode, Controller& controller);
 
 private:

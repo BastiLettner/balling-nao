@@ -1,4 +1,4 @@
-//
+t p//
 // Created by hrs_b on 10.01.19.
 //
 
@@ -14,9 +14,14 @@ class Controller;
 class DoneState: public State {
 
 public:
-
+    // Constructor
     DoneState();
 
+    // Implements the go next function.
+    // Raises an exception if called since this is the last state.
+    //
+    // Args:
+    //     controller: The controller holding the current state and the brain.
     void go_next(Controller& controller) override;
 
     const std::string get_state_name() override { return _state_name; }

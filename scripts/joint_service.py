@@ -7,75 +7,65 @@ from naoqi import ALProxy
 from balling_nao.srv import MoveJoints, MoveJointsResponse
 
 
-NAO_LIMITS = {
-    "HeadYaw": [-2, 2],
-    "HeadPitch": [-0.45, 0.45],
-    "RShoulderRoll":[0.3, 1.3],
-    "RShoulderPitch": [-2, 2]
-}
-
-
-
 class NaoController(object):
 
-    def __init__(self, ip, port):
+    """ Service that moves Naos joints on request
+        The request contains names, angles, speed and the response contains the new angles
+    """
 
+    def __init__(self, ip, port):
+        """
+
+        Args:
+            ip: NAO_IP
+            port: NAO_PORT
+        """
         self.nao_proxy = ALProxy("ALMotion", ip, port)
         rospy.init_node('move_joints_server')
-        rospy.Service("set_joints_server", MoveJoints, self.process_request)
+        rospy.Service("set_joints_server", MoveJoints, self.process_request)  # create the server
 
     def process_request(self, req):
+        """
 
-        self.set_stiffness(req, 1.0)
+        Args:
+            req: The request containing the names, angles and the speed.
+
+        Returns:
+            response: Contains the new angles
+        """
+
+        self.set_stiffness(req, 1.0)  # disable stiffness for joints on request
 
         # kill task call
         task_list = self.nao_proxy.getTaskList()
         for task in task_list:
             self.nao_proxy.killTask(task[1])
 
-        req.angles = list(req.angles)
+        req.angles = list(req.angles)  # set the angles to a list
 
-        #self.check_limits(req)
-        self.normal_movement(req)
-        #self.interpolated_movement(req);
+        self.normal_movement(req)  # perform movement
 
-        useSensors  = True
+        useSensors = True
         sensorAngles = self.nao_proxy.getAngles(req.names, useSensors)
-        response = MoveJointsResponse()
-        response.new_angles = sensorAngles
+        response = MoveJointsResponse()  # create the response
+        response.new_angles = sensorAngles  # set the sensed angles
 
+        # print the changed joints
         for name, angle, new_angle in zip(req.names, req.angles, response.new_angles):
             print "Performed angle change of {} to {}".format(name, angle)
             print "New angles {}: {}".format(name, new_angle)
 
-        return response
+        return response  # return the new angles
 
     def set_stiffness(self, req, val):
         for name in req.names:
-            for i in xrange(20):
+            for _ in xrange(20):
                 self.nao_proxy.setStiffnesses(name, val)
 
     def normal_movement(self, req):
 
+        # perform the movement(s)
         self.nao_proxy.setAngles(req.names, req.angles, req.fractionMaxSpeed)
-
-    #def interpolated_movement(self, req):
-
-        #self.nao_proxy.post.angleInterpolation(req.names, req.angles, req.times, True)
-
-    def check_limits(self, req):
-
-        is_valid = True
-
-        for i, name in enumerate(req.names):
-            limits = NAO_LIMITS[name]
-
-            if req.angles[i] < limits[0]:
-                req.angles[i] = limits[0]
-
-            if req.angles[i] > limits[1]:
-                req.angles[i] = limits[1]
-
 
 
 if __name__ == '__main__':
@@ -85,5 +75,3 @@ if __name__ == '__main__':
     print sys.argv[2]
     controller = NaoController(robotIP, PORT)
     rospy.spin()
-			
-		

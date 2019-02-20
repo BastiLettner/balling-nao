@@ -8,14 +8,14 @@ PathPlanning::PathPlanning(Search &search, Vision &vision):
     _search(search),
     _vision(vision)
 {
-
+    // Nothing to do here
 }
 
 
 void PathPlanning::calculate_path(std::vector<WayPoint> &path) {
 
-    float yaw = get_defender_rotation();
-    float span = get_defender_span();
+    float yaw = get_defender_rotation();  // get the orientation
+    float span = get_defender_span();  // get the span
     int orientation = (yaw > 0) - (yaw < 0); //1 if yaw is positive, -1 else
 
     // If the span is out of this range we assume that the defender was not detected
@@ -24,7 +24,7 @@ void PathPlanning::calculate_path(std::vector<WayPoint> &path) {
     if (span < 0.10f and span > -0.10f){
         span = orientation * 0.40f;
     }
-    int direction = (span >= 0) - (span < 0); //1 if span is postive, -1 else
+    int direction = (span >= 0) - (span < 0); //1 if span is positive, -1 else
 
     // Get marker position, extract angle and distance.
     auto defender_position = _vision.get_marker_mat_t_defender();
@@ -74,7 +74,7 @@ float PathPlanning::get_defender_rotation() {
 
     // If we can't see the defender we first search.
     if (not _vision.defender_visible()) {
-        SEARCH_MODE mode = SEARCH_MODE::VERY_SIMPLE_SEARCH;
+        SEARCH_MODE mode = SEARCH_MODE::VERY_SIMPLE_SEARCH;  // Using the simple search
         float found_at_head_angle;
         std::function<bool ()> f = [&]() { return _vision.defender_visible(); };
         bool defender_visible = _search.search_routine(
@@ -83,12 +83,13 @@ float PathPlanning::get_defender_rotation() {
                 found_at_head_angle
         );
         if (defender_visible) {
+            // If we found the defender we adjust our position
             _search.get_motion().request_move_to_position(0.0, 0.0, found_at_head_angle);
 
         }
     }
     // now we calculate the rotation
-    float yaw = _vision.get_defender_rotation();
+    float yaw = _vision.get_defender_rotation();  // Get the rotation 
     return yaw;
 
 }

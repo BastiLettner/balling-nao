@@ -19,8 +19,14 @@ class Brain {
 
 public:
 
+    // Constructor
+    //
+    // Args:
+    //     node_handle: The ros node handle
+    //
     explicit Brain(ros::NodeHandle& node_handle);
 
+    // Getter
     Speech& speech_module() { return _speech; }
     Vision& vision_module() { return _vision; }
     Motion& motion_module() { return _motion; }

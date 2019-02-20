@@ -12,6 +12,12 @@
 
 class Controller {
 
+    // The controller is the logical center of the program
+    // It holds the brain and the current state
+    // Its run function executes state after state,
+    // where the states set the current state of the controller.
+    // This way the controller moves through the state machine.
+
 public:
 
     // Initializes the controller.
@@ -35,8 +41,10 @@ public:
     void LOG(std::string msg);
 
     // The main function of the controller
+    // Starts the state machine.
     void run();
 
+    // Getter
     Speech& speech_module() { return _brain.speech_module(); }
     Vision& vision_module() { return _brain.vision_module(); }
     Motion& motion_module() { return _brain.motion_module(); }
@@ -45,7 +53,7 @@ public:
 
     // Set the current state.
     // This function will take ownership of the state passed to it
-    // and destroy it after setting it in the unique ptr
+    // and destroy it after setting it in the unique ptr as a member variable
     //
     // Args:
     //     state: The new state.

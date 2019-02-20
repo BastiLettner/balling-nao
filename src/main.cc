@@ -9,9 +9,9 @@ int main(int argc, char** argv) {
     ros::NodeHandle nh;
     ros::Rate loop_rate(10);
 
-    Controller c(nh);
+    Controller c(nh);  // Create controller
 
-    c.run();
+    c.run();  // Run Controller
 
     return 0;
 

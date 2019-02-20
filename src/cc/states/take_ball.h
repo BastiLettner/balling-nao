@@ -22,11 +22,10 @@ public:
     // The main steps are:
     //     1. Use Motion Module to move arm into <take-ball> position
     //     2. Use Tactile Module to detect tactile button press
-    //     3. Use Motion Module to finger_movement
+    //     3. Use Motion Module to close hand
     //     4. Use Vision Module to verify that ball is actually in naos hand
     //     5. if ball is in hand: move to RequestTaskState
     //     6. if ball is not in hand: Open Hand and move into TakeBallState
-    //                                TODO: Check if moving arm back is necessary
     //
     // Args:
     //     controller: The controller instance

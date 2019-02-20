@@ -35,7 +35,6 @@ void Speech::talk(std::string sentence) {
     msg_goal.goal_id.id = std::to_string(_vocab_id);
     msg_goal.goal.say = sentence;
     _vocab_id ++; // Increase id counter to guarantee uniqueness
-    // Todo: commented out for debugging, uncomment!
     _speech_pub.publish(msg_goal);
 
     // Wait 500 milli seconds to make sure the action status publishing
@@ -94,7 +93,6 @@ void Speech::listen(
             wait_iters ++;
         }
 
-        // TODO: Catch else
         // Stop recording
         if( _recog_stop_srv.call(empty)) {
             LOG("Stopped Recording");
@@ -177,7 +175,7 @@ void Speech::speech_status(const actionlib_msgs::GoalStatusArray::ConstPtr& msg)
     _currently_speaking = false;
 
     for(const auto& status: msg->status_list) {
-        if(status.status == 1/* or status.status == 3*/) {
+        if(status.status == 1) {
             _currently_speaking = true;
         }
     }

@@ -18,6 +18,7 @@ void ExecuteThrowMotionState::go_next(Controller &controller) {
 
     ros::spinOnce(); // update image
 
+    // Check if we can see the hoop and if not make another search and readjust the position
     if (!controller.vision_module().hoop_visible()){
         float found_at_head_angle;
         std::function<bool ()> f = [&]() { return controller.vision_module().hoop_visible(); };
@@ -34,6 +35,7 @@ void ExecuteThrowMotionState::go_next(Controller &controller) {
             controller.speech_module().talk("i lost the hoop");
         }
     }
+    // Use the marker position to select a shot and execute it
     auto hoop_position_x = controller.vision_module().get_marker_mat_t_hoop().at<float>(0);
     if (-0.10 < hoop_position_x and hoop_position_x <= 0.1) {
         controller.motion_module().perform_motion_sequence(MOTIONS::THROW::STRAIGHT_OVER_HEAD_EXT_SEQ);

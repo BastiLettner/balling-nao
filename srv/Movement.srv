@@ -1,9 +1,0 @@
-string name
-float32[] coordinates 
-float32 speed
-float32 time
-int32 type
----
-float32[6] coordinates
-
-

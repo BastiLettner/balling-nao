@@ -1,5 +1,0 @@
-#CREATE request parameters
-string joint_name
---------------------------------
-#CREATE response parameters
-float32[6] coordinates_6D

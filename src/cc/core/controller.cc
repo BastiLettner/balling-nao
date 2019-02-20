@@ -6,18 +6,6 @@
 #include "../states/request_ball.h"
 #include <iostream>
 
-// Todo: remove all states but initial state: request_ball.h
-//to debug only
-#include "../states/take_ball.h"
-#include "../states/detect_hoop.h"
-#include "../states/execute_throw_motion.h"
-#include "../states/execute_dunk_motion.h"
-#include "../states/search_defender.h"
-#include "../states/avoid_defender.h"
-
-
-// Todo: remove command, this is to start in SearchDefenderState(command)
-std::string command = "throw ";
 
 Controller::Controller(ros::NodeHandle& node_handle):
     _current_state(new RequestBallState()),
@@ -36,9 +24,9 @@ void Controller::go_next() {
     std::string msg("Nao entered ");
     msg += _current_state->get_state_name();
 
-    speech_module().talk(msg);
+    speech_module().talk(msg);  // Speak out the current state
 
-    _current_state->go_next(*this);
+    _current_state->go_next(*this);  // Execute the state
 
 }
 
@@ -63,7 +51,7 @@ void Controller::run() {
         warmup--;
     }
 
-    motion_module().go_to_posture("StandInit",0.5);
+    motion_module().go_to_posture("StandInit", 0.5);  // Go to stand posture
 
     // As long as we don't enter the 'Done' state we move on
     while(_current_state->get_state_name() != "Done") {
@@ -72,6 +60,8 @@ void Controller::run() {
         ros::spinOnce();
         loop_rate.sleep();
     }
+
+    // Cool down
     motion_module().go_to_posture("Crouch", 0.2);
     motion_module().disable_stiffness(3);
     LOG("Reached Done State");

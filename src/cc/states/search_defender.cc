@@ -20,7 +20,7 @@ void SearchDefenderState::go_next(Controller &controller) {
 
     // 1. if defender visible: move to AvoidDefenderState
     //    if defender not visible: move to DetectHoopState
-    SEARCH_MODE mode = SEARCH_MODE::SIMPLE;
+    SEARCH_MODE mode = SEARCH_MODE::SIMPLE;  // Use the simple search to look for the defender
     float found_at_head_angle;
     std::function<bool ()> f = [&]() { return controller.vision_module().defender_visible(); };
     bool defender_visible = controller.brain().search().search_routine(

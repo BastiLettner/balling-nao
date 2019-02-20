@@ -10,6 +10,8 @@
 
 class NotImplementedError: public BallingNaoError {
 
+    // For not implemented functions. Mainly fo development.
+
 public:
 
     NotImplementedError();

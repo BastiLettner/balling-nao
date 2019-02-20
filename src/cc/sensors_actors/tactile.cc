@@ -32,6 +32,7 @@ void Tactile::detect_button_pressed(std::string button_name) {
 
     ros::Rate loop_rate(10);
 
+    // Wait until the button is pressed
     while (_button_tracker.buttons[button_name] != ButtonStates::WAS_PRESSED) {
 
         ros::spinOnce();

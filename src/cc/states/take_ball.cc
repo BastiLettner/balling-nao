@@ -55,6 +55,7 @@ void TakeBallState::go_next(Controller &controller) {
         loop_rate.sleep();
         attempts++;
     }
+    // Put the head back into resting position
     controller.motion_module().perform_standard_motion(MOTIONS::HEAD_RESTING_POSITION);
 
     // 4. Use vision module to detect if ball is visible

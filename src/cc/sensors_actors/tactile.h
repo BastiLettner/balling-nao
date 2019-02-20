@@ -8,13 +8,13 @@
 #include <ros/node_handle.h>
 #include <naoqi_bridge_msgs/HeadTouch.h>
 
-
+// States of a button
 enum ButtonStates {
         RELEASED,
         WAS_PRESSED,
-
 };
 
+// Holds the state for the three buttons on NAOs head
 struct ButtonTracker {
 
     std::map<std::string, ButtonStates> buttons;

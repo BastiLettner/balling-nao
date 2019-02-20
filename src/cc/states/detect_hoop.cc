@@ -17,8 +17,7 @@ DetectHoopState::DetectHoopState(std::string& task):
 
 void DetectHoopState::go_next(Controller &controller) {
 
-    // 1. if hoop visible: move to hoop position
-    //    if hoop not visible: start over
+    // 1. Search for hoop
     if(state_routine(SEARCH_MODE::VERY_SIMPLE_SEARCH, controller)) return;
     else if(state_routine(SEARCH_MODE::MARKER_CLOSE, controller)) return;
     else if(state_routine(SEARCH_MODE::SIMPLE, controller)) return;
@@ -31,6 +30,7 @@ void DetectHoopState::go_next(Controller &controller) {
 
 bool DetectHoopState::state_routine(SEARCH_MODE mode, Controller& controller) {
 
+    // Make the search
     float found_at_head_angle;
     std::function<bool ()> f = [&]() { return controller.vision_module().hoop_visible(); };
     bool hoop_visible = controller.brain().search().search_routine(
@@ -39,6 +39,7 @@ bool DetectHoopState::state_routine(SEARCH_MODE mode, Controller& controller) {
             found_at_head_angle
     );
 
+    // Of the hoop was found
     if (hoop_visible) {
         controller.speech_module().talk("Found Hoop");
         controller.motion_module().request_move_to_position(0.0, 0.0, found_at_head_angle);

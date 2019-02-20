@@ -13,8 +13,17 @@ class ExecuteDunkMotionState: public State {
 
 public:
 
+    // Constructor
     ExecuteDunkMotionState();
 
+    // Implements the logic of the ExecuteThrowMotionState.
+    // The main steps are:
+    //     1. Execute the dunk motion.
+    //     2. Move into Done state
+    //
+    // Args:
+    //     controller: The controller instance
+    //
     void go_next(Controller& controller) override;
 
     const std::string get_state_name() override { return _state_name; }

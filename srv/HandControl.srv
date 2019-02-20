@@ -1,4 +1,0 @@
-string hand_name
-int32 action_type
---------------------------------
-bool success

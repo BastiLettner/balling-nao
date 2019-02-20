@@ -11,6 +11,8 @@
 
 class BallingNaoError: public std::exception {
 
+    // Interface for custom balling_nao exceptions
+
 public:
 
     explicit BallingNaoError(std::string what_arg);

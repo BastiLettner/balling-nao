@@ -26,8 +26,6 @@ public:
     //     2. Compare answers to available commands
     //     3. If 'yes': move to TakeBallState
     //        If 'no': move to DoneState
-    //        If 'not_understood': move to RequestBallState (and notify
-    //                             the user that the cmd was not understood.
     //
     // Args:
     //     controller: The controller instance

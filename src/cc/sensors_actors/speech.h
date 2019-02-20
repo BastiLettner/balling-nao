@@ -42,7 +42,8 @@ public:
 
     // Make a recording.
     // If Nao is currently speaking this function waits until he is done.
-    // If there was no match this function throws a CmdNotUnderstoodError containing useful information
+    // If there was no match of the recorded to the current vocab
+    // this function throws a CmdNotUnderstoodError containing useful information
     //
     // Args:
     //     available_sentences: The available sentences for this call.

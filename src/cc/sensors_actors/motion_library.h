@@ -14,6 +14,8 @@ extern const float PI_180;
 
 struct BaseMotion {
 
+    // A simple motion defined by a set of angles.
+
     BaseMotion(std::vector<std::string> n, std::vector<float> a, float s, float thresh):
         names(n),
         angles(a),
@@ -21,16 +23,18 @@ struct BaseMotion {
         success_threshold(thresh)
         {}
 
-    std::vector<std::string> names;
-    std::vector<float> angles;
+    std::vector<std::string> names;  // Name of the joints
+    std::vector<float> angles; // The angles of the joints
 
-    float speed;
-    float success_threshold;
+    float speed;  // The maxFractionSpeed argument
+    float success_threshold;  // The threshold for the motion to be considered successful
 
 };
 
 
 struct MotionSequence {
+
+    // A vector of BaseMotions
 
     MotionSequence(std::vector<BaseMotion> m, std::vector<bool> c):
         motions(m),
@@ -40,6 +44,8 @@ struct MotionSequence {
     std::vector<bool> make_check;
 
 };
+
+// THE MOTION LIBRARY
 
 namespace MOTIONS {
 
@@ -83,10 +89,6 @@ namespace MOTIONS {
 
 
 }
-
-
-
-
 
 
 #endif //BALLING_NAO_MOTION_LIBRARY_H

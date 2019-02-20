@@ -2,7 +2,6 @@ float32[] angles
 float32 fractionMaxSpeed
 float32[] times
 bool[] isAbsolutes
-#int32 movement_type
 string[] names
 ---
 float32[] new_angles
