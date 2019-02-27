@@ -13,6 +13,7 @@
 
 using namespace cv;
 
+// Calibration parameters of the top camera, provided during the tutorials
 namespace NaoCameraParameters {
 
     cv::Mat dist = (
@@ -37,12 +38,18 @@ namespace NaoCameraParameters {
     );
 }
 
+// hue values used to extract the ball and defender. Corresponds to the orange hue range 
 int huelow = 0;
 int huehigh = 70;
+
+// dilatation and erosion paramters used to improve the blob quality during the ball and defender extraction
 int erosion_size = 2;
 int dilation_size = 1;
+
+// smallest size (in pixels) a blob has to be to be considered a ball
 int ball_detection_area = 1800;
 
+// Aruco marker IDs of the hoop and defender
 int hoop_id = 1; //use chev.me/arucogen to generate aruco markers
 int defender_id = 0;
 
@@ -70,10 +77,11 @@ void Vision::image_reception(const sensor_msgs::ImageConstPtr &msg) {
     int const max_elem = 2;
     int const max_kernel_size = 21;
 
-    //namedWindow("Blob Extraction");
     namedWindow("Defender Blob");
     namedWindow("Defender detection");
     namedWindow("TrackBars");
+    
+    // Trackbars to tweak the ball and defender extraction on the fly, if needed
     createTrackbar( "Lower boundary of Hue", "TrackBars", &huelow, 255);
     createTrackbar( "Higher boundary of Hue", "TrackBars", &huehigh, 255);
     createTrackbar( "Erosion Kernel size:\n 2n +1", "TrackBars", &erosion_size, max_kernel_size);
@@ -82,47 +90,50 @@ void Vision::image_reception(const sensor_msgs::ImageConstPtr &msg) {
 
     waitKey(3);
 }
-/*This function tries to detect a colored ball by selecting a range of hue.
-*It gets rids of the background noise by eroding and then dilating the binary picture optained after the isolation of the ball.
-*It outputs true if the ball is visible, false otherwise
-*/
+
 bool Vision::ball_visible(){
 
     bool ball_detected = false;
     Mat eroded_image;
     Mat dilated_image;
 
-
     Mat HSVImage;
     cvtColor(Vision::_current_image, HSVImage, COLOR_BGR2HSV); //Conversion to HSV
+    // The pixels of the current frame that are included in the selected range are extracted to produce a binary image.
     inRange(HSVImage, cv::Scalar(huelow, 50, 255), cv::Scalar(huehigh, 255, 255), HSVImage); //Color extraction
 
+    // The white blobs is eroded to get rid of the tiny blobs
     Mat element_erosion = cv::getStructuringElement(
             cv::MORPH_ELLIPSE,
             cv::Size( 2*erosion_size + 1, 2*erosion_size+1 ),
             cv::Point( erosion_size, erosion_size )
     );
+    erode(HSVImage, eroded_image, element_erosion);
+    
+    // The white blobs are dilated make sure the ball is seen as one blob
     Mat element_dilation = cv::getStructuringElement(
             cv::MORPH_ELLIPSE,
             cv::Size( 2*dilation_size + 1, 2*dilation_size+1 ),
             cv::Point( dilation_size, dilation_size )
     );
-    erode(HSVImage, eroded_image, element_erosion);
     dilate(eroded_image, dilated_image, element_dilation);
 
     std::vector<std::vector<cv::Point> > contours; //vector of contours
     std::vector<Vec4i> hierarchy;
     Mat biggest_blob = dilated_image.clone();
+    // Determine the contour of the detected blobs
     findContours(biggest_blob, contours, hierarchy, 2/*cv::CV_RETR_CCOMP*/, 2/*cv::CV_CHAIN_APPROX_SIMPLE*/);
     for( int i = 0; i < contours.size(); i++ ) // iterate through each contour.
     {
         double a = contourArea(contours[i], false);  //  Find the area of contour
-        if (a > ball_detection_area) {
+        // if an area is bigger than the specified ball size, the ball is detected
+        if (a > ball_detection_area) { 
             ball_detected = true;
             break;
         }
     }
 
+    // Display the blobs after processing
     imshow("Blob Extraction", dilated_image);
 
     return ball_detected;
@@ -133,14 +144,17 @@ void Vision::detect_marker() {
     // Empty vector
     Vision::_aruco_markers.clear();
     Mat marker_image = Vision::_current_image.clone();
+    // Detects any marker present in the frame
     Vision::_marker_detector.detect(marker_image, Vision::_aruco_markers);
     if (not Vision::_aruco_markers.empty()) {
+        // Iterate though markers, stores their values and display them on screen
         for(size_t i = 0; i < _aruco_markers.size(); i++) {
             Vision::_aruco_markers[i].calculateExtrinsics(Vision::_marker_size, Vision::_cam_params, true);
             Vision::_aruco_markers[i].draw(marker_image, cv::Scalar(0, 255, 255), 2);
         }
     }
 
+    // Display the current frame with the markers overlayed
     cv::imshow("Marker Image", marker_image);
 }
 
@@ -166,9 +180,11 @@ void Vision::tf_publisher(std::vector<float>& point, std::string parent_frame, s
 }
 
 bool Vision::hoop_visible() {
+    
+    // Iterates though the markers and check if any of the marker's ID corresponds to the hoop
     for(size_t i = 0; i < _aruco_markers.size(); i++){
         if(_aruco_markers[i].id == hoop_id) {
-            Vision::_marker_mat_t_hoop = Vision::_aruco_markers[i].Tvec;
+            Vision::_marker_mat_t_hoop = Vision::_aruco_markers[i].Tvec; // Stores the translation matrix of the hoop marker
             return true;
         }
     }
@@ -178,9 +194,10 @@ bool Vision::hoop_visible() {
 
 bool Vision::defender_visible() {
 
+    // Iterates though the markers and check if any of the marker's ID corresponds to the defender
     for(size_t i = 0; i < _aruco_markers.size(); i++){
         if(_aruco_markers[i].id == defender_id) {
-            Vision::_marker_mat_t_defender = Vision::_aruco_markers[i].Tvec;
+            Vision::_marker_mat_t_defender = Vision::_aruco_markers[i].Tvec; // Stores the translation matrix of the defender marker
             return true;
         }
     }
@@ -197,6 +214,8 @@ float Vision::detect_defender_span(){
 
         int image_width = Vision::_current_image.cols;
         aruco::Marker defender;
+        
+        // Checks for the existence of a defender marker
         for (size_t i = 0; i < _aruco_markers.size(); i++) {
             if (_aruco_markers[i].id == defender_id) {
                 defender = _aruco_markers[i]; //stores the defender marker
@@ -208,8 +227,8 @@ float Vision::detect_defender_span(){
         Mat extracted_defender = extract_defender(); //get the extracted defender thanks to color segmentation
         float span;
 
+        ROS_INFO_STREAM("Center X: " + std::to_string(center.x));
         if (center.x < image_width / 2.0f) {
-            ROS_INFO_STREAM("Center X: " + std::to_string(center.x));
             //marker on the left, search right of the marker
             span = distance_marker_left_blob(extracted_defender, center.x);
         }
@@ -228,7 +247,6 @@ float Vision::detect_defender_span(){
 
 Mat Vision::extract_defender(){
 
-    // TODO change parameters to be unique and not conflict with ball detection
     Mat eroded_image;
     Mat dilated_image;
     Mat HSVImage;
@@ -271,14 +289,15 @@ float Vision::distance_marker_right_blob(Mat binary_defender, float center){
         double a = cv::contourArea( contours[i], false);  //  Find the area of contour
         if(a > min_blob_size) {
             blob = boundingRect(contours[i]);
-            if (blob.x < edge) {
+            if (blob.x < edge) { // checks if the current blob is further away than the previous one
                 edge = blob.x;
                 span = (float)edge - center;
-                rectangle(binary_defender, blob, Scalar(255, 255, 255));
-                rectangle(image_orig, blob, Scalar(255, 0, 0));
+                rectangle(binary_defender, blob, Scalar(255, 255, 255)); 
+                rectangle(image_orig, blob, Scalar(255, 0, 0)); // Draw a box around the blob
             }
         }
     }
+    
     imshow("Defender Blob", binary_defender);
     imshow("Defender detection", image_orig);
     return span;
@@ -301,13 +320,13 @@ float Vision::distance_marker_left_blob(Mat binary_defender, float center){
     for( int i = 0; i < contours.size(); i++ ) // iterate through each contour.
     {
         double a = cv::contourArea( contours[i], false);  //  Find the area of contour
-        if(a > min_blob_size) {
+        if(a > min_blob_size) { 
             blob = boundingRect(contours[i]);
-            if (blob.x + blob.width > edge) {
+            if (blob.x + blob.width > edge) { // checks if the current blob is further away than the previous one
                 edge = blob.x + blob.width;
                 span = (float)edge - center;
                 rectangle(binary_defender, blob, Scalar(255, 255, 255));
-                rectangle(image_orig, blob, Scalar(255, 0, 0));
+                rectangle(image_orig, blob, Scalar(255, 0, 0)); // Draw a box around the blob
             }
         }
     }
@@ -318,13 +337,17 @@ float Vision::distance_marker_left_blob(Mat binary_defender, float center){
 }
 
 float Vision::get_defender_rotation(){
+    
     if (defender_visible()) {
         Mat rvec_matrix;
+        // Iterate through the detected markers to look for a defender marker
         for (size_t i = 0; i < _aruco_markers.size(); i++) {
             if (_aruco_markers[i].id == defender_id) {
-                rvec_matrix = _aruco_markers[i].Rvec;
+                rvec_matrix = _aruco_markers[i].Rvec; // Retrieves the rotation matrix of the marker
             }
         }
+        
+        // Convert the rotation matrix into a vector
         std::vector<float> rvec{
                 rvec_matrix.at<float>(0),
                 rvec_matrix.at<float>(1),
@@ -339,7 +362,7 @@ float Vision::get_marker_yaw(std::vector<float> &rvec) {
 
     balling_nao::GetMarkerRotation srv;
     srv.request.Rvec = rvec;
-    if (_client_get_rotation.call(srv)) {
+    if (_client_get_rotation.call(srv)) { // Use the get rotation service to get the yaw from the rotation matrix
         return srv.response.yaw;
     }
     else {
