@@ -252,7 +252,7 @@ Mat Vision::extract_defender(){
     Mat HSVImage;
 
     cvtColor(Vision::_current_image, HSVImage, COLOR_BGR2HSV); //Conversion to HSV
-    inRange(HSVImage, cv::Scalar(huelow, 10, 180), cv::Scalar(huehigh, 200, 240), HSVImage); //Color extraction TODO change hue to correct values
+    inRange(HSVImage, cv::Scalar(huelow, 10, 180), cv::Scalar(huehigh, 200, 240), HSVImage); 
 
     Mat element_erosion = cv::getStructuringElement(
             cv::MORPH_ELLIPSE,
