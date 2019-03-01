@@ -8,7 +8,6 @@
 #include "../states/request_ball.h"
 #include <iostream>
 
-
 Controller::Controller(ros::NodeHandle& node_handle):
     _current_state(new RequestBallState()),
     _brain(node_handle)

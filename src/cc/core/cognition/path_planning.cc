@@ -26,6 +26,7 @@ void PathPlanning::calculate_path(std::vector<WayPoint> &path) {
     if (span < 0.10f and span > -0.10f){
         span = orientation * 0.40f;
     }
+    ROS_INFO_STREAM("Span: " + std::to_string(span));
     int direction = (span >= 0) - (span < 0); //1 if span is positive, -1 else
 
     // Get marker position, extract angle and distance.

@@ -9,13 +9,7 @@ import sys
 
 import tf
 from naoqi import ALProxy
-from balling_nao.srv import GetTransform, \
-    GetTransformResponse,\
-    GetPosition,\
-    GetPositionResponse,\
-    Movement,\
-    MovementResponse, \
-    GoToPosture, \
+from balling_nao.srv import GoToPosture, \
     GoToPostureResponse, \
     MoveToPosition, \
     MoveToPositionResponse

@@ -11,11 +11,7 @@
 #include <geometry_msgs/PoseStamped.h>
 #include <geometry_msgs/Pose2D.h>
 #include "../errors/not_implemented_error.h"
-#include "balling_nao/GetPosition.h"
-#include "balling_nao/Movement.h"
-#include "balling_nao/GetTransform.h"
 #include "balling_nao/MoveJoints.h"
-#include "balling_nao/HandControl.h"
 #include "balling_nao/GoToPosture.h"
 #include "balling_nao/MoveToPosition.h"
 #include "motion_library.h"
