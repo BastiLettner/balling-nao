@@ -1,3 +1,7 @@
+// Request task header file
+// Holds the instructions on what do in the request_task state
+// structure : single class
+
 //
 // Created by hrs_b on 10.01.19.
 //

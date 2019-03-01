@@ -1,7 +1,9 @@
+# joint movement requests
 float32[] angles
 float32 fractionMaxSpeed
 float32[] times
 bool[] isAbsolutes
 string[] names
 ---
+# angles after movement
 float32[] new_angles

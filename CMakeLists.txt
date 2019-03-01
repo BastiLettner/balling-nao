@@ -18,11 +18,7 @@ find_package(Boost REQUIRED COMPONENTS system thread)
 add_service_files(
   DIRECTORY srv
   FILES
-  GetPosition.srv
-  GetTransform.srv
-  Movement.srv
   MoveJoints.srv
-  HandControl.srv
   GoToPosture.srv
   MoveToPosition.srv
   GetMarkerRotation.srv
@@ -84,7 +80,6 @@ link_libraries(CONTROLLER ${catkin_LIBRARIES} ${MOTION} ${VISION} ${SPEECH})
 catkin_install_python(PROGRAMS
         ./scripts/joint_service.py
         ./scripts/position_service.py
-        ./scripts/hand_service.py
         ./scripts/rotation_service.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
@@ -95,5 +90,5 @@ target_link_libraries(BALLER ${catkin_LIBRARIES} ${Boost_LIBRARIES} ${CONTROLLER
 
 
 # Tests
-add_executable(TEST_SPEECH test/test_speech_integration.cc)
-add_executable(TEST_REQUEST_BALL test/test_state_request_ball.cc)
+#add_executable(TEST_SPEECH test/test_speech_integration.cc)
+#add_executable(TEST_REQUEST_BALL test/test_state_request_ball.cc)

@@ -1,3 +1,5 @@
+// Path finding class definition
+
 //
 // Created by hrs_b on 20.02.19.
 //

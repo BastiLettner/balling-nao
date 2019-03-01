@@ -1,3 +1,7 @@
+// Header file for the state class
+// Base Class for States
+// structure : single class
+
 //
 // Created by hrs_b on 10.01.19.
 //

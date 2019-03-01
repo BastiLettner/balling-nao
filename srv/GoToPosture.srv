@@ -1,5 +1,7 @@
+# posture requests
 string posture_name
 float32 speed
 ---
+# success indicator
 bool success
 

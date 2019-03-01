@@ -1,5 +1,7 @@
+# coordinates to walk to
 float32 x
 float32 y
 float32 theta
 ---
+# success indicator
 bool success

@@ -1,3 +1,7 @@
+// Brain header file
+// The brain is a super module that can access all sensor and actors to make cognition tasks that require "thinking"
+// structure : one class
+
 //
 // Created by hrs_b on 31.01.19.
 //

@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+# Joint service node
+
 import rospy
 import time
 import almath

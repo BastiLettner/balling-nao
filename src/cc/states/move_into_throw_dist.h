@@ -1,3 +1,6 @@
+// Move into throw distance state header
+// Holds the instructions on what to do when in the move_into_throw_dist state
+// structure : single class
 //
 // Created by hrs_b on 10.01.19.
 //

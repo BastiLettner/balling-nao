@@ -1,3 +1,7 @@
+// Header file for the motion class
+// The motion modules handles NAO's movement
+// structure : single class
+
 //
 // Created by hrs_b on 10.01.19.
 //

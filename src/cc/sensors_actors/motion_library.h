@@ -1,3 +1,7 @@
+// Header file for the motion library
+// The motion library holds the description of every movement used during the baksketball routine
+// structure : structure and namespace declaration
+
 //
 // Created by hrs_b on 28.01.19.
 //

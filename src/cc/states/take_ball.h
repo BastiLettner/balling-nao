@@ -1,3 +1,8 @@
+// take ball state header file
+// Holds the instructions on what to do when in the take_ball state
+// Base Class for States
+
+
 //
 // Created by hrs_b on 10.01.19.
 //

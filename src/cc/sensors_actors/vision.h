@@ -1,3 +1,7 @@
+// Vision header file
+// The vision module holds the functions using NAO's cameras
+// structure : single file
+
 //
 // Created by hrs_b on 10.01.19.
 //

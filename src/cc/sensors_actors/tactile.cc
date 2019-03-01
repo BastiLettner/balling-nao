@@ -1,3 +1,5 @@
+// Tactile class definition
+
 //
 // Created by hrs_b on 14.01.19.
 //

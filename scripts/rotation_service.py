@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# Rotation service node, extracts yaw from a rotation matrix
 import rospy
 import sys
 import numpy

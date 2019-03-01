@@ -1,3 +1,7 @@
+// Hoop detection state header file
+// This class holds the hoop detection instructions when in the detect_hoop state
+// structure : single class
+
 //
 // Created by hrs_b on 10.01.19.
 //

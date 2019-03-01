@@ -1,3 +1,7 @@
+// Header file for the speech class
+// The speech module handle any voice-related action
+// structure : single class
+
 //
 // Created by hrs_b on 10.01.19.
 //

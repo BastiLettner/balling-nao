@@ -1,3 +1,7 @@
+// Search defender state header file
+// Holds the instructions on what do to when in the request task state
+// structure : single class
+
 //
 // Created by hrs_b on 10.01.19.
 //

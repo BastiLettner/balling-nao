@@ -1,3 +1,7 @@
+// Header file for the defender avoidance state
+// This class holds the defender avoidance instructions when in the avoid_defender state
+// structure : single class
+
 //
 // Created by hrs_b on 10.01.19.
 //

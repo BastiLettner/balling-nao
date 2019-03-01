@@ -1,3 +1,7 @@
+// Request ball state header file
+// Holds the instrutions on what to do when in the request_ball state
+// structure : single class
+
 //
 // Created by hrs_b on 10.01.19.
 //

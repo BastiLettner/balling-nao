@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# Position (posture and walking) node
 import rospy
 import time
 import motion

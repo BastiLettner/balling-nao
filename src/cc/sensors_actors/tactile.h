@@ -1,3 +1,7 @@
+// Tactile class header
+// The tactile module retrieves the state of the capacitive buttons on NAO's head
+// stucture : single class
+
 //
 // Created by hrs_b on 14.01.19.
 //

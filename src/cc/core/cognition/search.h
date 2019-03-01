@@ -1,3 +1,7 @@
+// Header file for the searching routines
+// Searching is done progressively turning NAO's head to expand its field of view
+// structure : one class
+
 //
 // Created by hrs_b on 31.01.19.
 //
@@ -23,7 +27,6 @@ class Search {
     // Implements cognition task searching.
     // Uses motion and vision to find aruco markers.
     // There are different modes of searching which are appropriate in different situations
-    //
 
 public:
 

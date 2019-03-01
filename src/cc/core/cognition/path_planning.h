@@ -1,3 +1,7 @@
+// Header file for the path planning.
+// The path planning functions acquire data on the defender and how to avoid it.
+// structure : single class
+
 //
 // Created by hrs_b on 20.02.19.
 //

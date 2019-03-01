@@ -1,3 +1,5 @@
+# Rotation matrix
 float32[] Rvec
 --------------------------------
+# Yaw of the marker
 float32 yaw
