@@ -1,6 +1,6 @@
 # Balling NAO
 
-Class Project for the HRS 18/19 class.
+Class Project for the HRS 18/19 class (developed by three students).
 
 # How to run
 
